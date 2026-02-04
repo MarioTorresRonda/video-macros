@@ -1,5 +1,6 @@
 import { useFetch } from "@/hooks/useFetch";
 import { displayVideo } from "@/http/video";
+import { toFileNamePath } from "@/nameFormats/main";
 import { useEffect, useRef } from "react";
 
 export default function DisplayVideo( { url, ...props } ) {
@@ -9,7 +10,7 @@ export default function DisplayVideo( { url, ...props } ) {
     useEffect(() => {
         if( videoRef.current ) {
             console.log( url );
-            videoRef.current.src = `/api/video/display?videoPath=${encodeURIComponent(url)}`;
+            videoRef.current.src = `/api/video/display?videoPath=${encodeURIComponent( url )}`;
         }
     }, [url, videoRef])
     

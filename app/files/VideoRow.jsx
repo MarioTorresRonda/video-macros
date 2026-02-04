@@ -1,4 +1,5 @@
 import Checkbox from "@/components/Checkbox";
+import { fromFileNamePath } from "@/nameFormats/main";
 
 export default function VideoRow( { fileName, selectedVideos, setSelectedVideos, afterHandleSelect } ) {
 
@@ -19,7 +20,7 @@ export default function VideoRow( { fileName, selectedVideos, setSelectedVideos,
         <div className="bg-slate-600 h-0.5" ></div>
         <div className="flex flex-row gap-3 flex-1 ml-3">
             <Checkbox id={fileName+"_S"} text="" checked={ selectedVideos.find( (videoName) => videoName == fileName ) } onChange={onHandleSelectVideo} />
-            <div key={fileName} className="text-white self-center"> { fileName } </div>
+            <div key={fileName} className="text-white self-center overflow-hidden"> { fromFileNamePath( fileName ) } </div>
         </div>
     </div>
 }
