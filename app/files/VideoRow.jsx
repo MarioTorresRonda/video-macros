@@ -1,4 +1,4 @@
-import Checkbox from "@/components/Checkbox";
+import Checkbox from "@/components/Forms/Checkbox";
 import { fromFileNamePath } from "@/nameFormats/main";
 
 export default function VideoRow( { fileName, selectedVideos, setSelectedVideos, afterHandleSelect } ) {

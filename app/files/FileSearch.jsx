@@ -3,22 +3,32 @@
 import { useFetch } from "@/hooks/useFetch"
 import { fetchVideos, renameVideo } from "@/http/video";
 import { videoFileType } from "@/lib/utils/videoFileType";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import React from 'react';
 import DisplayVideo from "./DisplayVideo";
-import Checkbox from "@/components/Checkbox";
+import Checkbox from "@/components/Forms/Checkbox";
 import VideoRow from "./VideoRow";
 import DisplayName from "./DisplayName";
 import { fromFileNamePath, nameFormatList, toFileNamePath } from "@/nameFormats/main";
 import { types } from "@/nameFormats/fields";
+import { OptionContext } from "@/store/option-context";
 
 export default function FileSearch() {
 
+    const { mainFolder } = useContext( OptionContext );
+
     const [body, setBody] = useState( { 
-        url: "C:\\Users\\mario\\Videos",
+        url: mainFolder,
         types: videoFileType.toString(videoFileType.defaultObj)
     } )
 
+    useEffect(() => {
+        setBody( ( oldBody ) => {
+            const newBody = {...oldBody};
+            newBody.url = mainFolder;
+            return newBody;
+        });
+    }, [mainFolder, setBody])
 
     const [selectedVideos, setSelectedVideos] = useState( [] )
 
@@ -39,26 +49,7 @@ export default function FileSearch() {
         });
         setSelectedVideos([])
     }
-
-	function handleVideoPathChange(event) {
-        setBody( ( oldBody ) => {
-            const newBody = {...oldBody};
-            newBody.url = event.target.value;
-            return newBody;
-        });
-        setSelectedVideos([])
-	}
     
-	function handleVideoTypeChange(event, type) {
-        setBody((oldBody) => {
-            const newBody = {...oldBody};
-			const newVideoType = videoFileType.fromString(newBody.types);
-			newVideoType[type] = event.target.checked;
-            newBody.types = videoFileType.toString(newVideoType);
-			return newBody;
-		});
-	}
-
     function afterHandleSelect( newSelectedVideos ) {
         setDisplayNameBody( oldDisplayNameBody => {
             const newDisplayNameBody = {...oldDisplayNameBody};
@@ -144,21 +135,6 @@ export default function FileSearch() {
 	return (
         <div className="flex flex-row">
             <div className="w-1/2 flex flex-col gap-2">
-                <h1 className="text-2xl text-white"> Search video </h1>
-                <div className="flex flex-row">
-                    <input 
-                        className="bg-slate-700 px-4 py-3 outline-none w-full text-white rounded-lg border-2 transition-colors duration-100 border-solid focus:border-slate-400 border-slate-800" 
-                        value={body.url}
-                        onChange={handleVideoPathChange} 
-                    />
-                </div>
-                <div className="flex flex-row gap-2">
-                    {videoFileType.types.map((type) => {
-                        return (
-                            <Checkbox text={type} id={type} key={type} checked={videoFileType.fromString(body.types)[type]} onChange={(event) => {  handleVideoTypeChange(event, type); }} />
-                        );
-                    })}
-                </div>
                 <div className="flex flex-row justify-between">
                     <h2 className="text-xl text-white"> Lista de videos </h2>
                     <p className="text-xl text-stone-200">{ videoNames.length }</p>
