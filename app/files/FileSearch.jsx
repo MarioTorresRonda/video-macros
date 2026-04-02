@@ -1,7 +1,7 @@
 'use client'
 
 import { useFetch } from "@/hooks/useFetch"
-import { compressVideo, fetchVideos, renameVideo } from "@/http/video";
+import { compressVideo, fetchVideos, moveVideo, renameVideo } from "@/http/video";
 import { videoFileType } from "@/lib/utils/videoFileType";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import React from 'react';
@@ -13,10 +13,11 @@ import { fromFileNamePath, nameFormatList, toFileNamePath } from "@/nameFormats/
 import { types } from "@/nameFormats/fields";
 import { OptionContext } from "@/store/option-context";
 import { updateOptions } from "@/http/options";
+import PrettyButton from "@/components/Commons/PrettyButton";
 
 export default function FileSearch() {
 
-    const { mainFolder, formattedFolder } = useContext( OptionContext );
+    const { mainFolder, formattedFolder, uploadFolder } = useContext( OptionContext );
 
     const [body, setBody] = useState( { 
         url: mainFolder,
@@ -28,9 +29,10 @@ export default function FileSearch() {
             const newBody = {...oldBody};
             newBody.url = mainFolder;
             newBody.formattedUrl = formattedFolder;
+            newBody.uploadUrl = uploadFolder;
             return newBody;
         });
-    }, [mainFolder, formattedFolder, setBody])
+    }, [mainFolder, formattedFolder, uploadFolder, setBody])
 
     const [selectedVideos, setSelectedVideos] = useState( [] )
 
@@ -72,6 +74,20 @@ export default function FileSearch() {
         }
 
         const data = await renameVideo( params, {} );
+
+        handleVideoPathUpdate();
+    }
+
+    async function handleOnClickMove() {
+        for( const video of selectedVideos ) {
+            const params = {
+                dirPath : body.url,
+                newDirPath: uploadFolder,
+                fileName : video
+            }
+
+            await moveVideo( params, {} );
+        }
 
         handleVideoPathUpdate();
     }
@@ -126,8 +142,13 @@ export default function FileSearch() {
 
     const videoNames = videos.message.videos ? videos.message.videos : [];
     const oldVideoNames = videos.message.oldVideos ? videos.message.oldVideos : [];
+    const videosUpload = videos.message.uploadVideos ? videos.message.uploadVideos : [];
     const videosFormatted = videos.message.videosFormatted ? videos.message.videosFormatted : [];
     const formatCount = {}
+
+    //States of the video
+    const formatted = selectedVideos.findIndex( row => { const rowN = row.split(".")[0]; return videosFormatted.findIndex( rowF => rowF.indexOf( rowN ) != -1 ) != -1 } ) != -1;
+    const toUpload = selectedVideos.findIndex( row => { const rowN = row.split(".")[0]; return videosUpload.findIndex( rowF => rowF.indexOf( rowN ) != -1 ) != -1 } ) != -1;
 
     oldVideoNames.forEach( ( oldVideoName ) => {
         const formatIndex = oldVideoName.indexOf("■") + 1
@@ -177,9 +198,9 @@ export default function FileSearch() {
                 </div>
                 { ( !error && !isFetching && videos ) &&  <div> 
                     <div className="flex flex-col">
-                        { videoNames.map( (fileName) => {
-                            const formatted = videosFormatted.findIndex( row => row.indexOf( fileName.split(".")[0] ) != -1 ) != -1
-                            console.log( videosFormatted, fileName, formatted ) 
+                        { [...videosUpload, ...videoNames].map( (fileName) => {
+                            const formatted = videosFormatted.findIndex( row => row.indexOf( fileName.split(".")[0] ) != -1 ) != -1;
+                            const toUpload = videosUpload.findIndex( row => row.indexOf( fileName.split(".")[0] ) != -1 ) != -1;
 
                             return <VideoRow 
                                 fileName={fileName} 
@@ -188,6 +209,7 @@ export default function FileSearch() {
                                 setSelectedVideos={setSelectedVideos} 
                                 afterHandleSelect={afterHandleSelect}
                                 formatted={formatted}
+                                toUpload={toUpload}
                             />
                         } ) }
                         <div className="bg-slate-600 h-0.5" ></div>
@@ -195,27 +217,32 @@ export default function FileSearch() {
                 </div>}
             </div>
             { selectedVideos.length > 0 &&
-                 <div className="w-1/2 fixed top-0 right-0">
+                <div className="w-1/2 fixed top-0 right-0">
                 <div className="m-2 flex flex-col gap-2 ">
                         <div className="text-2xl text-white flex flex-row justify-between"> 
                             { fileNameType ? selectedVideos[0] : fileNameFormatted }
-                            <button
-                                className="bg-blue-900 px-4 focus:border-blue-700 border-blue-800 outline-none text-white rounded-lg border-2 transition-colors duration-100 border-solid "
+                            <PrettyButton 
                                 onClick={() => { setFileNameType( !fileNameType ) }}
-                                >
+                            >
                                 {fileNameType ? "URL" : "FORMAT"}
-                            </button>
+                            </PrettyButton>
                         </div>
 
-                        <DisplayVideo className="w-full" url={body.url+"\\"+selectedVideos[0] } />
+                        <DisplayVideo className="w-full" url={ (toUpload ? uploadFolder : mainFolder) +"\\"+selectedVideos[0] } />
                         <DisplayName displayNameBody={displayNameBody} setDisplayNameBody={setDisplayNameBody} handleOnClickRename={handleOnClickRename} handleSelectFormat={handleSelectFormat} selectedVideos={selectedVideos} obtainFormatCount={obtainFormatCount}/>
-                        <div className="flex flex-row gap-2 h-10 justify-between">
-                            <button
-                                className="bg-blue-900 px-4 focus:border-blue-700 border-blue-800 outline-none text-white rounded-lg border-2 transition-colors duration-100 border-solid "
+                        <div className="flex flex-row gap-2 h-10 justify-start">
+                            <PrettyButton
                                 onClick={compressVideos}
-                                >
+                                disabled={formatted}    
+                            >
                                 Comprimir { selectedVideos.length }
-                            </button>
+                            </PrettyButton>
+                            <PrettyButton
+                                onClick={handleOnClickMove}
+                                disabled={toUpload}    
+                            >
+                                Mover a Subir { selectedVideos.length }
+                            </PrettyButton>
                         </div>
                     </div>
                 </div>

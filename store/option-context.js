@@ -5,15 +5,18 @@ import { createContext, useReducer } from 'react';
 export const OptionContext = createContext({
     mainFolder: "",
     formattedFolder: "",
+    uploadFolder: "",
     init: ( initValue ) => {},
     setMainFolder: ( value ) => {},
-    setFormattedFolder : ( value ) => {}
+    setFormattedFolder : ( value ) => {},
+    setUploadFolder: () => {},
 });
 
 function OptionReducer(state, action) {
     if ( action.type == "INIT" ) {
         state.mainFolder = action.payload.mainFolder;
         state.formattedFolder = action.payload.formattedFolder;
+        state.uploadFolder = action.payload.uploadFolder;
     }
 
     if ( action.type == "SET_MAIN" ) {
@@ -24,17 +27,21 @@ function OptionReducer(state, action) {
         state.formattedFolder = action.payload.formattedFolder;
     }
 
+    if ( action.type == "SET_UPLOAD" ) {
+        state.uploadFolder = action.payload.uploadFolder;
+    }
+
     return {...state};
 }
 
 export default function OptionContextProvider( {children} ) {
 
-    const [ optionState, optionDispatch ] = useReducer( OptionReducer, { mainFolder: "", formattedFolder: "" } )
+    const [ optionState, optionDispatch ] = useReducer( OptionReducer, { mainFolder: "", formattedFolder: "", uploadFolder: "" } )
 
     function init( initValue ) {
         optionDispatch({
             type: "INIT",
-            payload: { mainFolder : initValue.mainFolder, formattedFolder : initValue.formattedFolder, }
+            payload: { mainFolder : initValue.mainFolder, formattedFolder : initValue.formattedFolder, uploadFolder: initValue.uploadFolder }
         });
     }
 
@@ -52,12 +59,21 @@ export default function OptionContextProvider( {children} ) {
         });
     }
 
+    function setUploadFolder( value ) {
+        optionDispatch({
+            type: "SET_UPLOAD",
+            payload: { uploadFolder : value }
+        });
+    }
+
     const ctxValue = {
         mainFolder: optionState.mainFolder,
         formattedFolder : optionState.formattedFolder,
+        uploadFolder : optionState.uploadFolder,
         init,
         setMainFolder,
-        setFormattedFolder
+        setFormattedFolder,
+        setUploadFolder,
     }
 
     return <OptionContext.Provider value={ctxValue}>

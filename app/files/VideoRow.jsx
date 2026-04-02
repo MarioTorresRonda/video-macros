@@ -1,7 +1,7 @@
 import Checkbox from "@/components/Forms/Checkbox";
 import { fromFileNamePath } from "@/nameFormats/main";
 
-export default function VideoRow( { fileName, selectedVideos, setSelectedVideos, afterHandleSelect, formatted } ) {
+export default function VideoRow( { fileName, selectedVideos, setSelectedVideos, afterHandleSelect, formatted, toUpload } ) {
 
     function onHandleSelectVideo( event ) {
         setSelectedVideos( ( oldSelectedVideos ) => {
@@ -23,6 +23,7 @@ export default function VideoRow( { fileName, selectedVideos, setSelectedVideos,
             <div className="flex flex-row gap-3 justify-between flex-1">
                 <div key={fileName} className="text-white self-center overflow-hidden flex-1"> { fromFileNamePath( fileName ) } </div>
                 { formatted && <div className="w-4 text-white self-center overflow-hidden"> F </div> }
+                { toUpload && <div className="w-4 text-white self-center overflow-hidden"> S </div> }
             </div>
             
         </div>

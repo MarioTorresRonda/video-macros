@@ -22,15 +22,27 @@ export async function GET(request) {
         return NextResponse.json({ message : "formattedPath invalid"  }, { status: 422 });
     }
 
+    const uploadPath = searchParams.get('uploadPath');
+    if ( !uploadPath ) {
+        return NextResponse.json({ message : "uploadPath invalid"  }, { status: 422 });
+    }
+
     let videoTypes = searchParams.get('videoTypes');
     if ( !videoTypes ) {
         return NextResponse.json({ message : "videoTypes invalid"  }, { status: 422 });
     }
     videoTypes = videoFileType.fromString( videoTypes );
 
-    const files = filterVideosTypes( fs.readdirSync(dirPath, 'utf8'), videoFileType.types.filter( type => videoTypes[type] ) );
+    const files = sortVideos( filterVideosTypes( fs.readdirSync(dirPath, 'utf8'), videoFileType.types.filter( type => videoTypes[type] ) ) );
     const formattedFiles = filterVideosTypes( fs.readdirSync(formattedPath, 'utf8'), [".mp4"] );
+    const uploadFiles = sortVideos( filterVideosTypes( fs.readdirSync(uploadPath, 'utf8'), videoFileType.types.filter( type => videoTypes[type] ) ) );
 
+    return NextResponse.json({ message : { videos: files, oldVideos: oldFiles, uploadVideos: uploadFiles, videosFormatted : formattedFiles  } }, { status: 200 });
+}
+
+function sortVideos( files ) {
+
+    //Create group by date
     const fileGroups = {};
     files.forEach( fileName => {
         const fileGroupID = fileName.substring(0, 8);
@@ -39,21 +51,18 @@ export async function GET(request) {
         }
         fileGroups[fileGroupID].push( { from: fileName } );
     } );
-    
-    sortGroups( fileGroups );
-    
-    let finalFiles = []
-    Object.keys( fileGroups ).forEach( (fileGroupID) => {
-        finalFiles = finalFiles.concat( fileGroups[fileGroupID] );
-    })
-    finalFiles = finalFiles.map( (item) => item.from )
-    return NextResponse.json({ message : { videos: finalFiles, oldVideos: oldFiles, videosFormatted : formattedFiles  } }, { status: 200 });
-}
 
-function sortGroups( fileGroups ) {
     Object.keys(fileGroups).forEach( fileGroupID => {
         fileGroups[fileGroupID].sort( sortGroupFunction );
     })
+
+    let sortFiles = []
+    Object.keys( fileGroups ).forEach( (fileGroupID) => {
+        sortFiles = sortFiles.concat( fileGroups[fileGroupID] );
+    })
+    sortFiles = sortFiles.map( (item) => item.from )
+
+    return sortFiles;
 }
 
 function sortGroupFunction( a, b ) {

@@ -8,7 +8,7 @@ import {useContext, useEffect, useRef, useState} from "react";
 export default function Options() {
 	
   	const dialog = useRef();
-	const {mainFolder, formattedFolder, init, setMainFolder, setFormattedFolder} = useContext(OptionContext);
+	const {mainFolder, formattedFolder, uploadFolder, init, setMainFolder, setFormattedFolder, setUploadFolder} = useContext(OptionContext);
     const [body, setBody] = useState({})
 
 	async function handleSave() {
@@ -55,6 +55,14 @@ export default function Options() {
 							value={formattedFolder}
 							onChange={(e) => {
 								setFormattedFolder(e.target.value);
+							}}
+							className="bg-slate-700 px-2  w-72 h-10 outline-none text-white border-2 transition-colors duration-100 border-solid focus:border-slate-400 border-slate-800"
+						/>
+						<p className="text-white text-xl"> Carpeta Ficheros Para Subir </p>
+						<input
+							value={uploadFolder}
+							onChange={(e) => {
+								setUploadFolder(e.target.value);
 							}}
 							className="bg-slate-700 px-2  w-72 h-10 outline-none text-white border-2 transition-colors duration-100 border-solid focus:border-slate-400 border-slate-800"
 						/>

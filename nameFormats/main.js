@@ -118,7 +118,7 @@ const factorKubata = {
     fields: [
         { type: types.createDate, length: 8, width: 0 },
         { type: types.block, char: " | ", width: 1 },
-        { type: types.block, char: " Factor Kuubata ", width: 20 },
+        { type: types.block, char: " Factor Kubata ", width: 20 },
         { type: types.block, char: " | ", width: 1 },
         { type: types.text, length: 70, width: 67 },
         { type: types.block, char: " | ", width: 1 },
