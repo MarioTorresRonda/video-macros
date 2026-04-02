@@ -6,12 +6,9 @@ const { platform } = require('node:process');
 
 export async function GET(request) {
     
-    
     let oldFiles = fs.readFileSync('./public/oldVideos.data', { encoding: 'utf8', flag: 'r' });
     oldFiles = oldFiles.split("\n");
     oldFiles = oldFiles.map(  oldFile => oldFile.replace("\r", "") )
-
-
 
     const searchParams = request.nextUrl.searchParams;
 
@@ -20,31 +17,22 @@ export async function GET(request) {
         return NextResponse.json({ message : "dirPath invalid"  }, { status: 422 });
     }
 
+    const formattedPath = searchParams.get('formattedPath');
+    if ( !formattedPath ) {
+        return NextResponse.json({ message : "formattedPath invalid"  }, { status: 422 });
+    }
+
     let videoTypes = searchParams.get('videoTypes');
     if ( !videoTypes ) {
         return NextResponse.json({ message : "videoTypes invalid"  }, { status: 422 });
     }
     videoTypes = videoFileType.fromString( videoTypes );
 
-    const files = fs.readdirSync(dirPath, 'utf8');
-    const filterType = []
-    files.forEach( ( fileName ) => {
-        const fileExtension = path.extname(fileName);
-        let found = false;
-        videoFileType.types.every( (type, index) => {
-            if ( videoTypes[type] && fileExtension == type ) {
-                found = true;
-                return false;
-            }
-            return true;
-        } )
-        if ( found ) {
-            filterType.push( fileName );
-        }
-    } )
+    const files = filterVideosTypes( fs.readdirSync(dirPath, 'utf8'), videoFileType.types.filter( type => videoTypes[type] ) );
+    const formattedFiles = filterVideosTypes( fs.readdirSync(formattedPath, 'utf8'), [".mp4"] );
 
     const fileGroups = {};
-    filterType.forEach( fileName => {
+    files.forEach( fileName => {
         const fileGroupID = fileName.substring(0, 8);
         if ( fileGroups[fileGroupID] == null ) {
             fileGroups[fileGroupID] = [];
@@ -59,7 +47,7 @@ export async function GET(request) {
         finalFiles = finalFiles.concat( fileGroups[fileGroupID] );
     })
     finalFiles = finalFiles.map( (item) => item.from )
-    return NextResponse.json({ message : { videos: finalFiles, oldVideos: oldFiles  } }, { status: 200 });
+    return NextResponse.json({ message : { videos: finalFiles, oldVideos: oldFiles, videosFormatted : formattedFiles  } }, { status: 200 });
 }
 
 function sortGroups( fileGroups ) {
@@ -110,4 +98,26 @@ const filenameTypes = {
             return Number( string )
          }
     }
+}
+
+function filterVideosTypes( files, fileTypes ) {
+
+    const filterType = []
+
+    files.forEach( ( fileName ) => {
+        const fileExtension = path.extname(fileName);
+        let found = false;
+        fileTypes.every( (type) => {
+            if ( fileExtension == type ) {
+                found = true;
+                return false;
+            }
+            return true;
+        } )
+        if ( found ) {
+            filterType.push( fileName );
+        }
+    } )
+
+    return filterType;
 }

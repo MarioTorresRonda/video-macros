@@ -10,10 +10,12 @@ export default function Options() {
   	const dialog = useRef();
 	const {mainFolder, formattedFolder, init, setMainFolder, setFormattedFolder} = useContext(OptionContext);
     const [body, setBody] = useState({})
+
 	async function handleSave() {
 		const params = {
 			mainFolder: mainFolder,
 			formattedFolder: formattedFolder,
+			uploadFolder : uploadFolder
 		};
 
 		await updateOptions(params, {});

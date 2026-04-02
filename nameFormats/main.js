@@ -16,7 +16,7 @@ const lol = {
         { type: types.block, char: " | " },
         { type: types.text, length: 3, width: 5 },
         { type: types.block, char: " | " },
-        { type: types.select, options: [ "Normal", "SoloQ", "FlexQ", "ARAM" ], width: 15 },
+        { type: types.select, options: [ "Normal", "SoloQ", "FlexQ", "ARAM", "ARAM CHAOS", "SCRIM" ], width: 15 },
         { type: types.block, char: " | " },
         { type: types.text, length: 12, width: 15 },
         { type: types.block, char: " " },
@@ -52,10 +52,136 @@ const videoEncoder = {
     ]
 }
 
+const portfolio = {
+    name: "Portfolio Mario Torres",
+    fields: [
+        { type: types.createDate, length: 8, width: 0 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: " Portfolio ", width: 20 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.text, length: 70, width: 70 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: " #", width: 1 },
+        { type: types.count, width: 2 },
+        { type: types.block, char: " | ", width: 1 },
+    ]
+}
+
+const wizardWithAGun = {
+    name: "Wizard with a Gun",
+    fields: [
+        { type: types.createDate, length: 8, width: 0 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: " Wizard with a Gun ", width: 30 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.text, length: 70, width: 60 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: " #", width: 1 },
+        { type: types.count, width: 2 },
+        { type: types.block, char: " | ", width: 1 },
+    ]
+}
+
+const megabonk = {
+    name: "Megabonk",
+    fields: [
+        { type: types.createDate, length: 8, width: 0 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: "Megabonk ", width: 30 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.text, length: 70, width: 57 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: " #", width: 2 },
+        { type: types.count, width: 4 },
+        { type: types.block, char: " | ", width: 1 },
+    ]
+}
+
+
+const brotato = {
+    name: "Brotato",
+    fields: [
+        { type: types.createDate, length: 8, width: 0 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: "Brotato ", width: 20 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.text, length: 70, width: 67 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: " #", width: 2 },
+        { type: types.count, width: 4 },
+        { type: types.block, char: " | ", width: 1 },
+    ]
+}
+
+const factorKubata = {
+    name: "Factor Kubata",
+    fields: [
+        { type: types.createDate, length: 8, width: 0 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: " Factor Kuubata ", width: 20 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.text, length: 70, width: 67 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: " #", width: 2 },
+        { type: types.count, width: 4 },
+        { type: types.block, char: " | ", width: 1 },
+    ]
+}
+
+const lolDemaciaRising = {
+    name: "LoL Demacia Rising",
+    fields: [
+        { type: types.createDate, length: 8, width: 0 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: " LoL Demacia Rising ", width: 20 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.text, length: 60, width: 57 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: " #", width: 2 },
+        { type: types.count, width: 4 },
+        { type: types.block, char: " | ", width: 1 },
+    ]
+}
+
+const dispatch = {
+    name: "Dispatch",
+    fields: [
+        { type: types.createDate, length: 8, width: 0 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: " Dispatch ", width: 20 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.text, length: 70, width: 67 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: " #", width: 2 },
+        { type: types.count, width: 4 },
+        { type: types.block, char: " | ", width: 1 },
+    ]
+}
+
+const circuitoTormenta = {
+    name: "Circuito Tormenta",
+    fields: [
+        { type: types.createDate, length: 8, width: 0 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: " Circuito tormenta ", width: 30 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.text, length: 60, width: 57 },
+        { type: types.block, char: " | ", width: 1 },
+    ]
+}
+
 export const nameFormatList = [
     plainText,
-    lol,
+    factorKubata,
     videoEncoder,
+    portfolio,
+    lol,
+    wizardWithAGun,
+    megabonk,
+    brotato,
+    lolDemaciaRising,
+    dispatch,
+    circuitoTormenta
 ]
 
 export function valuesFromFormat( format, fileName ) {

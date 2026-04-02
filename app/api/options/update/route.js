@@ -1,5 +1,6 @@
 import { fromString, videoFileType } from "@/lib/utils/videoFileType";
 import { fromFileNamePath } from "@/nameFormats/main";
+import { openDB } from "@/util/sqliteUtils";
 import { NextResponse } from "next/server";
 const fs = require('fs');
 const path = require('path');
@@ -19,12 +20,15 @@ export async function GET(request) {
         return NextResponse.json({ message : "formattedFolder invalid"  }, { status: 422 });
     }
 
-    const optionsObj = {
-        "mainFolder" : mainFolder,
-        "formattedFolder" : formattedFolder
+    const uploadFolder = searchParams.get('uploadFolder');
+    if ( !uploadFolder ) {
+        return NextResponse.json({ message : "uploadFolder invalid"  }, { status: 422 });
     }
-
-    fs.writeFileSync( './public/options.json', JSON.stringify(optionsObj)  );
+    
+    const db = await openDB();
+    await db.exec(`INSERT INTO options VALUES ("mainFolder", ${mainFolder})`)
+    await db.exec(`INSERT INTO options VALUES ("formattedFolder", ${formattedFolder})`)
+    await db.exec(`INSERT INTO options VALUES ("uploadFolder", ${uploadFolder})`)
         
     return NextResponse.json({ message : "options updated" }, { status: 200 });
 }

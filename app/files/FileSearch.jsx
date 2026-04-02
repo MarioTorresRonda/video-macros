@@ -1,7 +1,7 @@
 'use client'
 
 import { useFetch } from "@/hooks/useFetch"
-import { fetchVideos, renameVideo } from "@/http/video";
+import { compressVideo, fetchVideos, renameVideo } from "@/http/video";
 import { videoFileType } from "@/lib/utils/videoFileType";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import React from 'react';
@@ -12,10 +12,11 @@ import DisplayName from "./DisplayName";
 import { fromFileNamePath, nameFormatList, toFileNamePath } from "@/nameFormats/main";
 import { types } from "@/nameFormats/fields";
 import { OptionContext } from "@/store/option-context";
+import { updateOptions } from "@/http/options";
 
 export default function FileSearch() {
 
-    const { mainFolder } = useContext( OptionContext );
+    const { mainFolder, formattedFolder } = useContext( OptionContext );
 
     const [body, setBody] = useState( { 
         url: mainFolder,
@@ -26,9 +27,10 @@ export default function FileSearch() {
         setBody( ( oldBody ) => {
             const newBody = {...oldBody};
             newBody.url = mainFolder;
+            newBody.formattedUrl = formattedFolder;
             return newBody;
         });
-    }, [mainFolder, setBody])
+    }, [mainFolder, formattedFolder, setBody])
 
     const [selectedVideos, setSelectedVideos] = useState( [] )
 
@@ -37,6 +39,8 @@ export default function FileSearch() {
         values: [],
         selectedFormat : nameFormatList[0]
     })
+
+    const [fileNameType, setFileNameType] = useState(false)
 
     const [oldVideosHeight, setOldVideosHeight] = useState("h-0")
     
@@ -122,6 +126,7 @@ export default function FileSearch() {
 
     const videoNames = videos.message.videos ? videos.message.videos : [];
     const oldVideoNames = videos.message.oldVideos ? videos.message.oldVideos : [];
+    const videosFormatted = videos.message.videosFormatted ? videos.message.videosFormatted : [];
     const formatCount = {}
 
     oldVideoNames.forEach( ( oldVideoName ) => {
@@ -131,6 +136,17 @@ export default function FileSearch() {
             formatCount[format] = !formatCount[format] ? 1 : formatCount[format] + 1;
         }
     });
+
+    async function compressVideos() {
+        for( const video of selectedVideos ) {
+            const params = {
+                mainFolder,
+                fileName : video,
+            };
+
+            await compressVideo( params, {} )
+        }
+    }
 
 	return (
         <div className="flex flex-row">
@@ -162,17 +178,46 @@ export default function FileSearch() {
                 { ( !error && !isFetching && videos ) &&  <div> 
                     <div className="flex flex-col">
                         { videoNames.map( (fileName) => {
-                            return <VideoRow fileName={fileName} key={fileName} selectedVideos={selectedVideos} setSelectedVideos={setSelectedVideos} afterHandleSelect={afterHandleSelect} />
+                            const formatted = videosFormatted.findIndex( row => row.indexOf( fileName.split(".")[0] ) != -1 ) != -1
+                            console.log( videosFormatted, fileName, formatted ) 
+
+                            return <VideoRow 
+                                fileName={fileName} 
+                                key={fileName} 
+                                selectedVideos={selectedVideos} 
+                                setSelectedVideos={setSelectedVideos} 
+                                afterHandleSelect={afterHandleSelect}
+                                formatted={formatted}
+                            />
                         } ) }
                         <div className="bg-slate-600 h-0.5" ></div>
                     </div>
                 </div>}
             </div>
             { selectedVideos.length > 0 &&
-                <div className="w-1/2 m-2 flex flex-col gap-2">
-                    <div className="text-2xl text-white"> { body.url+"\\"+fileNameFormatted } </div>
-                    <DisplayVideo className="w-full" url={body.url+"\\"+selectedVideos[0] } />
-                    <DisplayName displayNameBody={displayNameBody} setDisplayNameBody={setDisplayNameBody} handleOnClickRename={handleOnClickRename} handleSelectFormat={handleSelectFormat} selectedVideos={selectedVideos} obtainFormatCount={obtainFormatCount}/>
+                 <div className="w-1/2 fixed top-0 right-0">
+                <div className="m-2 flex flex-col gap-2 ">
+                        <div className="text-2xl text-white flex flex-row justify-between"> 
+                            { fileNameType ? selectedVideos[0] : fileNameFormatted }
+                            <button
+                                className="bg-blue-900 px-4 focus:border-blue-700 border-blue-800 outline-none text-white rounded-lg border-2 transition-colors duration-100 border-solid "
+                                onClick={() => { setFileNameType( !fileNameType ) }}
+                                >
+                                {fileNameType ? "URL" : "FORMAT"}
+                            </button>
+                        </div>
+
+                        <DisplayVideo className="w-full" url={body.url+"\\"+selectedVideos[0] } />
+                        <DisplayName displayNameBody={displayNameBody} setDisplayNameBody={setDisplayNameBody} handleOnClickRename={handleOnClickRename} handleSelectFormat={handleSelectFormat} selectedVideos={selectedVideos} obtainFormatCount={obtainFormatCount}/>
+                        <div className="flex flex-row gap-2 h-10 justify-between">
+                            <button
+                                className="bg-blue-900 px-4 focus:border-blue-700 border-blue-800 outline-none text-white rounded-lg border-2 transition-colors duration-100 border-solid "
+                                onClick={compressVideos}
+                                >
+                                Comprimir { selectedVideos.length }
+                            </button>
+                        </div>
+                    </div>
                 </div>
             }
         </div>

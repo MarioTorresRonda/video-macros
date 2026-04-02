@@ -1,7 +1,7 @@
 import { apiCall, blobCall } from "./main";
 
 export async function fetchVideos( params, body ) {
-    const resData = await apiCall( `/api/video/list?dirPath=${encodeURIComponent(params.url)}&videoTypes=${encodeURIComponent(params.types)}` , body);
+    const resData = await apiCall( `/api/video/list?dirPath=${encodeURIComponent(params.url)}&formattedPath=${encodeURIComponent(params.formattedUrl)}&videoTypes=${encodeURIComponent(params.types)}` , body);
     return resData;
 }
 
@@ -14,5 +14,10 @@ export async function displayVideo( params, body ) {
 
 export async function renameVideo( params, body ) {
     const resData = await apiCall( `/api/video/rename?dirPath=${encodeURIComponent(params.dirPath)}&oldFileName=${encodeURIComponent(params.oldFileName)}&newFileName=${encodeURIComponent(params.newFileName)}&formatName=${encodeURIComponent(params.formatName)}` , body);
+    return resData;
+}
+
+export async function compressVideo( params, body ) {
+    const resData = await apiCall( `/api/video/compress?dirPath=${encodeURIComponent(params.mainFolder)}&fileName=${encodeURIComponent(params.fileName)}`, body);
     return resData;
 }

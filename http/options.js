@@ -6,7 +6,7 @@ export async function readOptions( params, body ) {
 }
 
 export async function updateOptions( params, body ) {
-    const resData = await apiCall( `/api/options/update?mainFolder=${encodeURIComponent(params.mainFolder)}&formattedFolder=${encodeURIComponent(params.formattedFolder)}`, body);
+    const resData = await apiCall( `/api/options/update?mainFolder=${encodeURIComponent(params.mainFolder)}&formattedFolder=${encodeURIComponent(params.formattedFolder)}&uploadFolder=${encodeURIComponent(params.uploadFolder)}`, body);
     return resData;
 }
 
