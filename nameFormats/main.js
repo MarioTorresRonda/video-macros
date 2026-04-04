@@ -207,7 +207,6 @@ export function valuesFromFormat( format, fileName ) {
                 }
                 const rest = fileName.substr( lastValueCharacterIndex, fileName.length );
                 const length = rest.indexOf( nextField.char ) == -1 ? fileName.length - lastValueCharacterIndex : rest.indexOf( nextField.char );
-                console.log( length, lastValueCharacterIndex, fileName.substr( lastValueCharacterIndex, length ) );
                 values[index] = fileName.substr( lastValueCharacterIndex, length )
                 lastValueCharacterIndex += length;
             }
@@ -238,7 +237,23 @@ export function valuesFromFormat( format, fileName ) {
 }
 
 
+export function toYoutubeName( fileName ) {
+    if( fileName.indexOf("║") != -1 ) {
+        fileName = fromFileNamePath( fileName );
+    }
 
+    fileName = fileName.split(".")[0];
+    const index = fileName.indexOf(")") == -1 ? 8 : fileName.indexOf(")") + 1;
+    const date = fileName.substr(0, 8 );
+    fileName = fileName.substr(index) + " | " + date;
+
+    fileName = fileName.replaceAll( /(\|(\s*\|)+)/g, "|" );
+    fileName = fileName.replaceAll( /\s{2,}/g, " " );
+    fileName = fileName.replaceAll( /^[\s\|]*/g, "" );
+    fileName = fileName.replaceAll( /[\s\|]*$/g, "" );
+
+    return fileName;
+}
 
 export function toFileNamePath( fileName ) {
     fileName = fileName.replaceAll(" ", "_").replaceAll("|", "║").replaceAll("<", "≤").replaceAll(">", "≥").replaceAll(":", "░")

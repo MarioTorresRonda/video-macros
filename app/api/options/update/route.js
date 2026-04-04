@@ -26,7 +26,6 @@ export async function GET(request) {
     }
     
     const db = await openDB();
-    console.log( mainFolder, formattedFolder, uploadFolder);
     await db.exec(`INSERT INTO options VALUES ('mainFolder', '${mainFolder}' )`)
     await db.exec(`INSERT INTO options VALUES ('formattedFolder', '${formattedFolder}' )`)
     await db.exec(`INSERT INTO options VALUES ('uploadFolder', '${uploadFolder}' )`)

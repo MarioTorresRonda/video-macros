@@ -8,7 +8,7 @@ export async function GET(request) {
     
     let oldFiles = fs.readFileSync('./public/oldVideos.data', { encoding: 'utf8', flag: 'r' });
     oldFiles = oldFiles.split("\n");
-    oldFiles = oldFiles.map(  oldFile => oldFile.replace("\r", "") )
+    oldFiles = oldFiles.map( oldFile => oldFile.replace("\r", "") )
 
     const searchParams = request.nextUrl.searchParams;
 

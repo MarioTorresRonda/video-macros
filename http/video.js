@@ -8,7 +8,6 @@ export async function fetchVideos( params, body ) {
 export async function displayVideo( params, body ) {
     body = { headers: { 'Content-Type': 'video/mkv' }, ...body }
     let response =  await blobCall( `/api/video/display?videoPath=${encodeURIComponent(params.url)}`, body);
-    console.log( response.url )
     return response.url;
 }
 

@@ -9,7 +9,6 @@ export default function DisplayVideo( { url, ...props } ) {
 
     useEffect(() => {
         if( videoRef.current ) {
-            console.log( url );
             videoRef.current.src = `/api/video/display?videoPath=${encodeURIComponent( url )}`;
         }
     }, [url, videoRef])

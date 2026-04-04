@@ -18,7 +18,6 @@ export async function createDB( db ) {
   let result;
   result = await db.all(`SELECT name FROM sqlite_master WHERE type='table' AND name='options';`)
   if ( result.length == 0) {
-      console.log( "options table created" )
       await db.exec('CREATE TABLE options (param TEXT, value TEXT)')
       await db.exec('INSERT INTO options VALUES ("mainFolder", "C:\\Users\\mario\\Videos")')
       await db.exec('INSERT INTO options VALUES ("formattedFolder", "C:\\Users\\mario\\Videos\\F")')
