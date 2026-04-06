@@ -9,32 +9,18 @@ const plainText = {
     ]
 }
 
-const lol = {
-    name: "League of Legends",
+const factorKubata = {
+    name: "Factor Kubata",
     fields: [
         { type: types.createDate, length: 8, width: 0 },
-        { type: types.block, char: " | " },
-        { type: types.text, length: 3, width: 5 },
-        { type: types.block, char: " | " },
-        { type: types.select, options: [ "Normal", "SoloQ", "FlexQ", "ARAM", "ARAM CHAOS", "SCRIM" ], width: 15 },
-        { type: types.block, char: " | " },
-        { type: types.text, length: 12, width: 15 },
-        { type: types.block, char: " " },
-        { type: types.select, options: [ "", "Top", "Jungla", "Medio", "Tirador", "Soporte" ], width: 11 },
-        { type: types.block, char: " | " },
-        { type: types.select, options: [ "Victoria", "Derrota" ], width: 11 },
-        { type: types.block, char: " | " },
-        { type: types.number, width: 5  },
-        { type: types.block, char: "/" },
-        { type: types.number, width: 5  },
-        { type: types.block, char: "/" },
-        { type: types.number, width: 5  },
-        { type: types.block, char: " | " },
-        { type: types.select, options: [ "", "Hierro", "Bronce", "Plata", "Oro", "Platino", "Esmeralda", "Diamante", "Master" ], width: 14 },
-        { type: types.block, char: " " },
-        { type: types.select, options: [ "", "IV", "III", "II", "I" ], width: 7  },
-        { type: types.block, char: " | " },
-        { type: types.select, options: [ "", "Mods" ], width: 9  },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: " Factor Kubata ", width: 20 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.text, length: 70, width: 67 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: " #", width: 2 },
+        { type: types.count, width: 4 },
+        { type: types.block, char: " | ", width: 1 },
     ]
 }
 
@@ -64,6 +50,35 @@ const portfolio = {
         { type: types.block, char: " #", width: 1 },
         { type: types.count, width: 2 },
         { type: types.block, char: " | ", width: 1 },
+    ]
+}
+
+const lol = {
+    name: "League of Legends",
+    fields: [
+        { type: types.createDate, length: 8, width: 0 },
+        { type: types.block, char: " | " },
+        { type: types.text, length: 3, width: 5 },
+        { type: types.block, char: " | " },
+        { type: types.select, options: [ "Normal", "SoloQ", "FlexQ", "ARAM", "ARAM CHAOS", "SCRIM" ], width: 15 },
+        { type: types.block, char: " | " },
+        { type: types.text, length: 12, width: 15 },
+        { type: types.block, char: " " },
+        { type: types.select, options: [ "", "Top", "Jungla", "Medio", "Tirador", "Soporte" ], width: 11 },
+        { type: types.block, char: " | " },
+        { type: types.select, options: [ "Victoria", "Derrota" ], width: 11 },
+        { type: types.block, char: " | " },
+        { type: types.number, width: 5  },
+        { type: types.block, char: "/" },
+        { type: types.number, width: 5  },
+        { type: types.block, char: "/" },
+        { type: types.number, width: 5  },
+        { type: types.block, char: " | " },
+        { type: types.select, options: [ "", "Hierro", "Bronce", "Plata", "Oro", "Platino", "Esmeralda", "Diamante", "Master" ], width: 14 },
+        { type: types.block, char: " " },
+        { type: types.select, options: [ "", "IV", "III", "II", "I" ], width: 7  },
+        { type: types.block, char: " | " },
+        { type: types.select, options: [ "", "Mods" ], width: 9  },
     ]
 }
 
@@ -97,28 +112,12 @@ const megabonk = {
     ]
 }
 
-
 const brotato = {
     name: "Brotato",
     fields: [
         { type: types.createDate, length: 8, width: 0 },
         { type: types.block, char: " | ", width: 1 },
         { type: types.block, char: "Brotato ", width: 20 },
-        { type: types.block, char: " | ", width: 1 },
-        { type: types.text, length: 70, width: 67 },
-        { type: types.block, char: " | ", width: 1 },
-        { type: types.block, char: " #", width: 2 },
-        { type: types.count, width: 4 },
-        { type: types.block, char: " | ", width: 1 },
-    ]
-}
-
-const factorKubata = {
-    name: "Factor Kubata",
-    fields: [
-        { type: types.createDate, length: 8, width: 0 },
-        { type: types.block, char: " | ", width: 1 },
-        { type: types.block, char: " Factor Kubata ", width: 20 },
         { type: types.block, char: " | ", width: 1 },
         { type: types.text, length: 70, width: 67 },
         { type: types.block, char: " | ", width: 1 },
@@ -170,6 +169,19 @@ const circuitoTormenta = {
     ]
 }
 
+const BaldusGate3 = {
+    name: "Baldurs Gate 3",
+    fields: [
+        { type: types.createDate, length: 8, width: 0 },
+        { type: types.block, char: " BG3 ", width: 5 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.select, options: [ "Acto1", "Acto2", "Acto3" ], width: 10 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.text, length: 82, width: 85 },
+
+    ]
+}
+
 export const nameFormatList = [
     plainText,
     factorKubata,
@@ -181,7 +193,8 @@ export const nameFormatList = [
     brotato,
     lolDemaciaRising,
     dispatch,
-    circuitoTormenta
+    circuitoTormenta,
+    BaldusGate3
 ]
 
 export function valuesFromFormat( format, fileName ) {

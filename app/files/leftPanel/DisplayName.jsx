@@ -6,15 +6,23 @@ import DisplayNameResult from "./DisplayNameResult";
 
 export default function DisplayName( { displayNameBody, setDisplayNameBody, selectedVideos, handleOnClickRename, handleSelectFormat, obtainFormatCount, toUpload } ) {
 
+	function obtainType( fileName ) {
+		const splitFileName = fileName.split(".");
+		return `.${splitFileName[ splitFileName.length - 1 ]}`;
+	}
+
 	function onHandleFieldChange(event, index) {
         setDisplayNameBody( oldDisplayNameBody => {
             const newDisplayNameBody = {...oldDisplayNameBody};
             const newValues = [...newDisplayNameBody.values];
 			newValues[index] = event.target.value;
 			newDisplayNameBody.values =  newValues;
+			newDisplayNameBody.fileName = newValues.join("") + obtainType( newDisplayNameBody.fileName )
             return newDisplayNameBody;
         }  );
 	}
+
+	console.log( displayNameBody );
 
 	if (selectedVideos.length > 1) {
 		return <>

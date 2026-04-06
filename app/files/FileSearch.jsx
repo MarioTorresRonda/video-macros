@@ -1,7 +1,7 @@
 'use client'
 
 import { useFetch } from "@/hooks/useFetch"
-import { compressVideo, fetchVideos, moveVideo, renameVideo } from "@/http/video";
+import { fetchVideos, moveVideo, renameVideo } from "@/http/video";
 import { videoFileType } from "@/lib/utils/videoFileType";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import React from 'react';
@@ -14,6 +14,9 @@ import { types } from "@/nameFormats/fields";
 import { OptionContext } from "@/store/option-context";
 import { updateOptions } from "@/http/options";
 import PrettyButton from "@/components/Commons/PrettyButton";
+import CompressButton from "./buttons/CompressButton";
+import MoveUploadButton from "./buttons/MoveUploadButton";
+import MergeButton from "./buttons/MergeButton";
 
 export default function FileSearch() {
 
@@ -73,25 +76,11 @@ export default function FileSearch() {
         const params = {
             dirPath : body.url,
             oldFileName : selectedVideos[0],
-            newFileName : displayNameBody.fileName,
+            newFileName : toFileNamePath(displayNameBody.fileName),
             formatName : displayNameBody.selectedFormat.name,
         }
 
         const data = await renameVideo( params, {} );
-
-        handleVideoPathUpdate();
-    }
-
-    async function handleOnClickMove() {
-        for( const video of selectedVideos ) {
-            const params = {
-                dirPath : body.url,
-                newDirPath: uploadFolder,
-                fileName : video
-            }
-
-            await moveVideo( params, {} );
-        }
 
         handleVideoPathUpdate();
     }
@@ -161,17 +150,6 @@ export default function FileSearch() {
     const formatted = selectedVideos.findIndex( row => { const rowN = row.split(".")[0]; return videosFormatted.findIndex( rowF => rowF.indexOf( rowN ) != -1 ) != -1 } ) != -1;
     const toUpload = selectedVideos.findIndex( row => { const rowN = row.split(".")[0]; return videosUpload.findIndex( rowF => rowF.indexOf( rowN ) != -1 ) != -1 } ) != -1;
 
-    async function compressVideos() {
-        for( const video of selectedVideos ) {
-            const params = {
-                mainFolder,
-                fileName : video,
-            };
-
-            await compressVideo( params, {} )
-        }
-    }
-
 	return (
         <div className="flex flex-row">
             <div className="w-1/2 flex flex-col gap-2">
@@ -240,18 +218,9 @@ export default function FileSearch() {
                             obtainFormatCount={obtainFormatCount}
                         />
                         <div className="flex flex-row gap-2 h-10 justify-start">
-                            <PrettyButton
-                                onClick={compressVideos}
-                                disabled={formatted}    
-                            >
-                                Comprimir { selectedVideos.length }
-                            </PrettyButton>
-                            <PrettyButton
-                                onClick={handleOnClickMove}
-                                disabled={toUpload}    
-                            >
-                                Mover a Subir { selectedVideos.length }
-                            </PrettyButton>
+                            <CompressButton selectedVideos={selectedVideos} formatted={formatted} handleVideoPathUpdate={handleVideoPathUpdate} />
+                            <MoveUploadButton selectedVideos={selectedVideos} toUpload={toUpload} handleVideoPathUpdate={handleVideoPathUpdate} />
+                            { selectedVideos.length > 1 && <MergeButton selectedVideos={selectedVideos} toUpload={toUpload} /> }
                         </div>
                     </div>
                 </div>
