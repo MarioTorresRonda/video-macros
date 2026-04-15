@@ -1,5 +1,6 @@
 const { spawn } = require('child_process');
 import { NextResponse } from "next/server";
+import { extractsAllCOMS } from "../list/route";
 
 export async function GET(request) {
   
@@ -8,6 +9,11 @@ export async function GET(request) {
     const dirPath = searchParams.get('dirPath');
     if ( !dirPath ) {
         return NextResponse.json({ message : "dirPath invalid"  }, { status: 422 });
+    }
+
+    const uploadPath = searchParams.get('uploadPath');
+    if ( !uploadPath ) {
+        return NextResponse.json({ message : "uploadPath invalid"  }, { status: 422 });
     }
 
     const newFileName = searchParams.get('newFileName');
@@ -30,7 +36,19 @@ export async function GET(request) {
     }
 
     const response = await videoApiPromise( dirPath, newFileName, files );
+    
+    const allComs = extractsAllCOMS( uploadPath )
+    const filteredComs = allComs.filter( comFile =>  {
+      console.log( comFile );
+      return files.findIndex( file => { 
+        const fileName =  file.split(".").slice(0, file.split(".").length - 1 ).join("")
+        return comFile.indexOf( fileName ) != -1 
+      } ) != -1
+    } )
 
+      const response2 = await videoApiPromise( dirPath, newFileName + "_COM", filteredComs );
+
+    console.log(  );
     return NextResponse.json({ message : response }, { status: 200 });  
 }
 

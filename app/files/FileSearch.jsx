@@ -17,6 +17,8 @@ import PrettyButton from "@/components/Commons/PrettyButton";
 import CompressButton from "./buttons/CompressButton";
 import MoveUploadButton from "./buttons/MoveUploadButton";
 import MergeButton from "./buttons/MergeButton";
+import ComButton from "./buttons/ComButton";
+import DeleteButton from "./buttons/DeleteButton";
 
 export default function FileSearch() {
 
@@ -137,6 +139,7 @@ export default function FileSearch() {
     const oldVideoNames = videos.message.oldVideos ? videos.message.oldVideos : [];
     const videosUpload = videos.message.uploadVideos ? videos.message.uploadVideos : [];
     const videosFormatted = videos.message.videosFormatted ? videos.message.videosFormatted : [];
+    const comVideos = videos.message.comVideos ? videos.message.comVideos : [];
 
     const formatCount = {}
     const oldVideoObj = {}
@@ -149,8 +152,9 @@ export default function FileSearch() {
     //States of the video
     const formatted = selectedVideos.findIndex( row => { const rowN = row.split(".")[0]; return videosFormatted.findIndex( rowF => rowF.indexOf( rowN ) != -1 ) != -1 } ) != -1;
     const toUpload = selectedVideos.findIndex( row => { const rowN = row.split(".")[0]; return videosUpload.findIndex( rowF => rowF.indexOf( rowN ) != -1 ) != -1 } ) != -1;
-
-	return (
+    const com = selectedVideos.findIndex( row => { const rowN = row.split(".")[0]; return comVideos.findIndex( rowF => rowF.indexOf( rowN ) != -1 ) != -1 } ) != -1;
+	
+    return (
         <div className="flex flex-row">
             <div className="w-1/2 flex flex-col gap-2">
                 <div className="flex flex-row justify-between">
@@ -180,6 +184,7 @@ export default function FileSearch() {
                         { [...videosUpload, ...videoNames].map( (fileName) => {
                             const formatted = videosFormatted.findIndex( row => row.indexOf( fileName.split(".")[0] ) != -1 ) != -1;
                             const toUpload = videosUpload.findIndex( row => row.indexOf( fileName.split(".")[0] ) != -1 ) != -1;
+                            const com = comVideos.findIndex( row => row.indexOf( fileName.split(".")[0] ) != -1 ) != -1;
                             return <VideoRow 
                                 fileName={fileName} 
                                 key={fileName} 
@@ -188,6 +193,7 @@ export default function FileSearch() {
                                 afterHandleSelect={afterHandleSelect}
                                 formatted={formatted}
                                 toUpload={toUpload}
+                                com={com}
                             />
                         } ) }
                         <div className="bg-slate-600 h-0.5" ></div>
@@ -217,10 +223,16 @@ export default function FileSearch() {
                             selectedVideos={selectedVideos} 
                             obtainFormatCount={obtainFormatCount}
                         />
-                        <div className="flex flex-row gap-2 h-10 justify-start">
-                            <CompressButton selectedVideos={selectedVideos} formatted={formatted} handleVideoPathUpdate={handleVideoPathUpdate} />
-                            <MoveUploadButton selectedVideos={selectedVideos} toUpload={toUpload} handleVideoPathUpdate={handleVideoPathUpdate} />
-                            { selectedVideos.length > 1 && <MergeButton selectedVideos={selectedVideos} toUpload={toUpload} /> }
+                        <div className="flex flex-col gap-2">
+                            <div className="flex flex-row gap-2 min-h-10 justify-start">
+                                <CompressButton selectedVideos={selectedVideos} formatted={formatted} handleVideoPathUpdate={handleVideoPathUpdate} />
+                                <MoveUploadButton selectedVideos={selectedVideos} toUpload={toUpload} handleVideoPathUpdate={handleVideoPathUpdate} />
+                                <ComButton selectedVideos={selectedVideos} toUpload={toUpload} com={com} handleVideoPathUpdate={handleVideoPathUpdate} />
+                                <DeleteButton selectedVideos={selectedVideos} toUpload={toUpload} com={com} handleVideoPathUpdate={handleVideoPathUpdate} />
+                            </div>
+                            <div className="flex flex-row gap-2 h-10 justify-start">
+                                { selectedVideos.length > 1 && <MergeButton selectedVideos={selectedVideos} toUpload={toUpload} /> }
+                            </div>
                         </div>
                     </div>
                 </div>

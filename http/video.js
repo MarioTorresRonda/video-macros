@@ -26,11 +26,21 @@ export async function moveVideo( params, body ) {
     return resData;
 }
 
+export async function comVideo( params, body ) {
+    const resData = await apiCall( `/api/video/com?dirPath=${encodeURIComponent(params.mainFolder)}&fileName=${encodeURIComponent(params.fileName)}`, body);
+    return resData;
+}
+
 export async function mergeVideo( params, body ) {
 
     const filesCount = params.files.length;
     const filesParams = params.files.map( ( file, index) => `file${index}=${encodeURIComponent(file)}` ).join("&")
 
-    const resData = await apiCall( `/api/video/merge?dirPath=${encodeURIComponent(params.dirPath)}&newFileName=${encodeURIComponent(params.newFileName)}&filesCount=${filesCount}&${filesParams}` , body);
+    const resData = await apiCall( `/api/video/merge?dirPath=${encodeURIComponent(params.dirPath)}&uploadPath=${encodeURIComponent(params.uploadUrl)}&newFileName=${encodeURIComponent(params.newFileName)}&filesCount=${filesCount}&${filesParams}` , body);
+    return resData;
+}
+
+export async function deleteVideo( params, body ) {
+    const resData = await apiCall( `/api/video/delete?dirPath=${encodeURIComponent(params.mainFolder)}&fileName=${encodeURIComponent(params.fileName)}&com=${encodeURIComponent(params.com)}`, body);
     return resData;
 }

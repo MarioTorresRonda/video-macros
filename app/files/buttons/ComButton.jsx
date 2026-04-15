@@ -1,29 +1,28 @@
 import PrettyButton from "@/components/Commons/PrettyButton";
-import { compressVideo } from "@/http/video";
+import { comVideo, moveVideo } from "@/http/video";
 import { OptionContext } from "@/store/option-context";
 import { useContext } from "react";
 
-export default function CompressButton( { selectedVideos, formatted, handleVideoPathUpdate } ) {
+export default function ComButton( { selectedVideos, toUpload, com, handleVideoPathUpdate } ) {
 
-    
     const { mainFolder } = useContext( OptionContext );
     
-    async function compressVideos() {
+    async function comVideos() {
         for( const video of selectedVideos ) {
             const params = {
                 mainFolder,
                 fileName : video,
             };
 
-            await compressVideo( params, {} )
+            await comVideo( params, {} )
             handleVideoPathUpdate();
         }
     }
 
     return <PrettyButton
-        onClick={compressVideos}
-        disabled={formatted}    
+        onClick={comVideos}
+        disabled={ !(toUpload && !com) }    
     >
-        Comprimir { selectedVideos.length }
+        Crear fichero COM { selectedVideos.length }
     </PrettyButton>
 }

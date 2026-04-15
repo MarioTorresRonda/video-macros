@@ -35,9 +35,36 @@ export async function GET(request) {
 
     const files = sortVideos( filterVideosTypes( fs.readdirSync(dirPath, 'utf8'), videoFileType.types.filter( type => videoTypes[type] ) ) );
     const formattedFiles = filterVideosTypes( fs.readdirSync(formattedPath, 'utf8'), [".mp4"] );
-    const uploadFiles = sortVideos( filterVideosTypes( fs.readdirSync(uploadPath, 'utf8'), videoFileType.types.filter( type => videoTypes[type] ) ) );
+    let uploadFiles = sortVideos( filterVideosTypes( fs.readdirSync(uploadPath, 'utf8'), videoFileType.types.filter( type => videoTypes[type] ) ) );
+    const comsFiles = extractCOMs( uploadFiles );
+    uploadFiles = uploadFiles.filter( file => comsFiles.indexOf(file) == -1 );
 
-    return NextResponse.json({ message : { videos: files, oldVideos: oldFiles, uploadVideos: uploadFiles, videosFormatted : formattedFiles  } }, { status: 200 });
+    return NextResponse.json({ message : { videos: files, oldVideos: oldFiles, uploadVideos: uploadFiles, videosFormatted : formattedFiles, comVideos : comsFiles  } }, { status: 200 });
+}
+
+export function extractsAllCOMS( uploadPath ) {
+    let uploadFiles = sortVideos( filterVideosTypes( fs.readdirSync(uploadPath, 'utf8'), Object.keys( videoFileType.defaultObj ) ) );
+    return extractCOMs( uploadFiles );
+
+}
+
+function extractCOMs( files ) {
+
+    const coms = []
+
+    files.forEach( (file)  => {
+        const splits = file.split(".");
+        const extension = splits.splice( splits.length - 1 ).join("");
+        const fileName = splits.join("")
+        if ( fileName.substr( fileName.length - 4 ) == "_COM" ) {
+            const normalFile = fileName.substr( 0, fileName.length - 4 ) + "." + extension;
+            if ( files.indexOf( normalFile ) != -1 ) {
+                coms.push( file );
+            }
+        }
+    } ) 
+    
+    return coms;
 }
 
 function sortVideos( files ) {

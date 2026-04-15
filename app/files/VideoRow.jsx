@@ -1,7 +1,7 @@
 import Checkbox from "@/components/Commons/Checkbox";
 import { fromFileNamePath, toYoutubeName } from "@/nameFormats/main";
 
-export default function VideoRow( { fileName, selectedVideos, setSelectedVideos, afterHandleSelect, formatted, toUpload } ) {
+export default function VideoRow( { fileName, selectedVideos, setSelectedVideos, afterHandleSelect, formatted, toUpload, com } ) {
 
     function onHandleSelectVideo( event ) {
         setSelectedVideos( ( oldSelectedVideos ) => {
@@ -24,6 +24,7 @@ export default function VideoRow( { fileName, selectedVideos, setSelectedVideos,
                 <div key={fileName} className="text-white self-center overflow-hidden flex-1"> { toYoutubeName( fileName ) } </div>
                 { formatted && <div className="w-4 text-white self-center overflow-hidden"> F </div> }
                 { toUpload && <div className="w-4 text-white self-center overflow-hidden"> S </div> }
+                { com && <div className="w-4 text-white self-center overflow-hidden"> C </div> }
             </div>
             
         </div>

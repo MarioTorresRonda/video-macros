@@ -24,6 +24,9 @@ export async function createDB( db ) {
       await db.exec('INSERT INTO options VALUES ("uploadFolder", "C:\\Users\\mario\\Videos\\Subir")')
   }
   
-  result = await db.all(`SELECT name FROM sqlite_master WHERE type='table' AND name='options';`)
+  result = await db.all(`SELECT name FROM sqlite_master WHERE type='table' AND name='videos';`)
+  if ( result.length == 0) {
+      await db.exec('CREATE TABLE options (id TEXT,  TEXT)')
+  }
 
 } 

@@ -8,13 +8,14 @@ import { useContext, useState } from "react";
 export default function MergeButton( { selectedVideos, toUpload } ) {
 
     const [ newFileName, setNewFileName ] = useState("")
-    const { mainFolder } = useContext( OptionContext );
+    const { mainFolder, uploadFolder } = useContext( OptionContext );
     
 
     async function mergeVideos() {
         const params = {
             dirPath : mainFolder,
             newFileName: toFileNamePath(newFileName),
+            uploadUrl : uploadFolder,
             files : selectedVideos,
         };
 
