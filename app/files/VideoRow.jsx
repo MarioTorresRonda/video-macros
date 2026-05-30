@@ -16,10 +16,18 @@ export default function VideoRow( { fileName, selectedVideos, setSelectedVideos,
         } )
     }
 
+    let checked = false;
+    selectedVideos.forEach( (videoName) =>  { 
+        if ( videoName == fileName ) {  
+            checked = true; 
+            return;
+        } 
+    } );
+
     return <div className=" h-9 flex flex-col justify-center">
         <div className="bg-slate-600 h-0.5" ></div>
         <div className="flex flex-row gap-3 flex-1 ml-3">
-            <Checkbox id={fileName+"_S"} text="" checked={ selectedVideos.find( (videoName) => videoName == fileName ) } onChange={onHandleSelectVideo} />
+            <Checkbox id={fileName+"_S"} text="" checked={checked} onChange={onHandleSelectVideo} />
             <div className="flex flex-row gap-3 justify-between flex-1">
                 <div key={fileName} className="text-white self-center overflow-hidden flex-1"> { toYoutubeName( fileName ) } </div>
                 { formatted && <div className="w-4 text-white self-center overflow-hidden"> F </div> }

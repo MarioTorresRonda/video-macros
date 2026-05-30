@@ -135,6 +135,8 @@ export default function FileSearch() {
     
 	const {isFetching, fetchedData: videos, error, setFetchedData: setVideos} = useFetch(fetchVideos, body, { message: [] }, []);
 
+    const isResponseValid = videos.message.length != 0 && videos.message.videos != null;
+
     const videoNames = videos.message.videos ? videos.message.videos : [];
     const oldVideoNames = videos.message.oldVideos ? videos.message.oldVideos : [];
     const videosUpload = videos.message.uploadVideos ? videos.message.uploadVideos : [];
@@ -153,7 +155,7 @@ export default function FileSearch() {
     const formatted = selectedVideos.findIndex( row => { const rowN = row.split(".")[0]; return videosFormatted.findIndex( rowF => rowF.indexOf( rowN ) != -1 ) != -1 } ) != -1;
     const toUpload = selectedVideos.findIndex( row => { const rowN = row.split(".")[0]; return videosUpload.findIndex( rowF => rowF.indexOf( rowN ) != -1 ) != -1 } ) != -1;
     const com = selectedVideos.findIndex( row => { const rowN = row.split(".")[0]; return comVideos.findIndex( rowF => rowF.indexOf( rowN ) != -1 ) != -1 } ) != -1;
-	
+
     return (
         <div className="flex flex-row">
             <div className="w-1/2 flex flex-col gap-2">
@@ -161,7 +163,7 @@ export default function FileSearch() {
                     <h2 className="text-xl text-white"> Lista de videos </h2>
                     <p className="text-xl text-stone-200">{ videoNames.length }</p>
                 </div>
-                { error && <div> Error: {error.message} </div>}
+                { !isResponseValid && error && <div> Error: {error.message} </div>}
                 { isFetching && <div> Loading... </div>}
                 <div className="flex flex-col w-full gap-2">
                     <button 
@@ -179,7 +181,7 @@ export default function FileSearch() {
                         } ) }
                     </div>
                 </div>
-                { ( !error && !isFetching && videos ) &&  <div> 
+                { ( !isFetching && isResponseValid ) &&  <div> 
                     <div className="flex flex-col">
                         { [...videosUpload, ...videoNames].map( (fileName) => {
                             const formatted = videosFormatted.findIndex( row => row.indexOf( fileName.split(".")[0] ) != -1 ) != -1;

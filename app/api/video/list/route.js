@@ -16,6 +16,9 @@ export async function GET(request) {
     if ( !dirPath ) {
         return NextResponse.json({ message : "dirPath invalid"  }, { status: 422 });
     }
+    if ( !fs.existsSync(dirPath)) {
+        return NextResponse.json({ message : "dirPath does not exists"  }, { status: 422 });
+    }
 
     const formattedPath = searchParams.get('formattedPath');
     if ( !formattedPath ) {

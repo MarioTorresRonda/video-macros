@@ -1,4 +1,5 @@
 export default function Checkbox( { text, id, ...props } ) {
+
 	return <label htmlFor={id+"hr"} className="flex flex-row items-center gap-2.5 dark:text-white light:text-black">
 		<input id={id+"hr"} type="checkbox" className="peer hidden" {...props} />
 		<div

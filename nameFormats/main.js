@@ -53,6 +53,36 @@ const portfolio = {
     ]
 }
 
+const future0 = {
+    name: "Future: 0",
+    fields: [
+        { type: types.createDate, length: 8, width: 0 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: " Future: 0 ", width: 20 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.text, length: 70, width: 70 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: " #", width: 1 },
+        { type: types.count, width: 2 },
+        { type: types.block, char: " | ", width: 1 },
+    ]
+}
+
+const Scrapborn = {
+    name: "Scrapborn",
+    fields: [
+        { type: types.createDate, length: 8, width: 0 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: " Scrapborn ", width: 20 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.text, length: 67, width: 67 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: " #", width: 2 },
+        { type: types.count, width: 4 },
+        { type: types.block, char: " | ", width: 1 },
+    ]
+}
+
 const lol = {
     name: "League of Legends",
     fields: [
@@ -60,7 +90,7 @@ const lol = {
         { type: types.block, char: " | " },
         { type: types.text, length: 3, width: 5 },
         { type: types.block, char: " | " },
-        { type: types.select, options: [ "Normal", "SoloQ", "FlexQ", "ARAM", "ARAM CHAOS", "Arena", "SCRIM" ], width: 15 },
+        { type: types.select, options: [ "Normal", "SoloQ", "FlexQ", "ARAM", "ARAM CHAOS", "Arena", "Arena 3v3", "SCRIM" ], width: 15 },
         { type: types.block, char: " | " },
         { type: types.text, length: 12, width: 15 },
         { type: types.block, char: " " },
@@ -79,6 +109,36 @@ const lol = {
         { type: types.select, options: [ "", "IV", "III", "II", "I" ], width: 7  },
         { type: types.block, char: " | " },
         { type: types.select, options: [ "", "Mods" ], width: 9  },
+    ]
+}
+
+const minecraftSmpMarte= {
+    name: "Minecraft SMP Marte",
+    fields: [
+        { type: types.createDate, length: 8, width: 0 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: " Minecraft | SMP Marte", width: 30 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.text, length: 80, width: 60 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: " #", width: 1 },
+        { type: types.count, width: 2 },
+        { type: types.block, char: " | ", width: 1 },
+    ]
+}
+
+const minecraftCobblemon = {
+    name: "Minecraft Cobblemon",
+    fields: [
+        { type: types.createDate, length: 8, width: 0 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: " Minecraft | Cobblemon", width: 30 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.text, length: 80, width: 60 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: " #", width: 1 },
+        { type: types.count, width: 2 },
+        { type: types.block, char: " | ", width: 1 },
     ]
 }
 
@@ -182,19 +242,37 @@ const BaldusGate3 = {
     ]
 }
 
+const silksong = {
+    name: "Hollow Knight Silksong",
+    fields: [
+        { type: types.createDate, length: 8, width: 0 },
+        { type: types.block, char: " HK Silksong ", width: 15 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.count, width: 4 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.text, length: 75, width: 74 },
+
+    ]
+}
+
 export const nameFormatList = [
     plainText,
     factorKubata,
     videoEncoder,
     portfolio,
+    future0,
+    Scrapborn,
     lol,
+    minecraftSmpMarte,
+    minecraftCobblemon,
     wizardWithAGun,
     megabonk,
     brotato,
     lolDemaciaRising,
     dispatch,
     circuitoTormenta,
-    BaldusGate3
+    BaldusGate3,
+    silksong
 ]
 
 export function valuesFromFormat( format, fileName ) {
