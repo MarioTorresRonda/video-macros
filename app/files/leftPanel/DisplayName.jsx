@@ -22,8 +22,6 @@ export default function DisplayName( { displayNameBody, setDisplayNameBody, sele
         }  );
 	}
 
-	console.log( displayNameBody );
-
 	if (selectedVideos.length > 1) {
 		return <>
 			{ toUpload && <div className="flex flex-col max-h-40 overflow-y-auto gap-2">

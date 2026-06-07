@@ -3,15 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "concurrently \"next dev\" \"node services\\services.js\" ",
     "build": "next build",
-    "start": "next start",
+    "start": "concurrently \"next start\" \"node worker.js\" ",
     "lint": "eslint"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "concurrently": "^10.0.3",
     "framer-motion": "12.26.2",
     "lucide-react": "^0.562.0",
     "next": "16.1.2",
@@ -28,5 +29,6 @@
     "eslint-config-next": "16.1.2",
     "tailwindcss": "^4",
     "tailwindcss-animate": "^1.0.7"
-  }
+  },
+  "type": "module"
 }

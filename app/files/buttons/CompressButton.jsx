@@ -3,7 +3,7 @@ import { compressVideo } from "@/http/video";
 import { OptionContext } from "@/store/option-context";
 import { useContext } from "react";
 
-export default function CompressButton( { selectedVideos, formatted, handleVideoPathUpdate } ) {
+export default function CompressButton( { selectedVideos, compressed, handleVideoPathUpdate } ) {
 
     
     const { mainFolder } = useContext( OptionContext );
@@ -22,7 +22,7 @@ export default function CompressButton( { selectedVideos, formatted, handleVideo
 
     return <PrettyButton
         onClick={compressVideos}
-        disabled={formatted}    
+        disabled={compressed}    
     >
         Comprimir { selectedVideos.length }
     </PrettyButton>

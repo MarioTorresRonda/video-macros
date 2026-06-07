@@ -14,7 +14,7 @@ export async function readDB( db, query ) {
 }
 
 export async function createDB( db ) {
-  
+
   let result;
   result = await db.all(`SELECT name FROM sqlite_master WHERE type='table' AND name='options';`)
   if ( result.length == 0) {
@@ -26,7 +26,11 @@ export async function createDB( db ) {
   
   result = await db.all(`SELECT name FROM sqlite_master WHERE type='table' AND name='videos';`)
   if ( result.length == 0) {
-      await db.exec('CREATE TABLE options (id TEXT,  TEXT)')
+      await db.exec('CREATE TABLE videos (id TEXT, format TEXT, fields TEXT, fullName TEXT )')
   }
 
+  result = await db.all(`SELECT name FROM sqlite_master WHERE type='table' AND name='compress';`)
+  if ( result.length == 0) {
+      await db.exec('CREATE TABLE compress ( dirPath TEXT, fileName TEXT )')
+  }
 } 

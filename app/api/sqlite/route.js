@@ -3,9 +3,13 @@ import { NextResponse } from "next/server";
 
 export async function GET(request) {
 
-    const db = await openDB();
-    await createDB( db );
+    try{
 
-    return NextResponse.json({ message : "database created" }, { status: 200 });
+        const db = await openDB();
+        await createDB( db );
+        
+        return NextResponse.json({ message : "database created" }, { status: 200 });
+    }catch(e) {
+        return NextResponse.json({ message : "error: " + e }, { status: 402 });
+    }
 }
-

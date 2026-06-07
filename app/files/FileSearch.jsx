@@ -19,6 +19,7 @@ import MoveUploadButton from "./buttons/MoveUploadButton";
 import MergeButton from "./buttons/MergeButton";
 import ComButton from "./buttons/ComButton";
 import DeleteButton from "./buttons/DeleteButton";
+import { decodeBase62 } from "@/util/base62";
 
 export default function FileSearch() {
 
@@ -65,13 +66,23 @@ export default function FileSearch() {
         setDisplayNameBody( oldDisplayNameBody => {
             const newDisplayNameBody = {...oldDisplayNameBody};
             if ( newSelectedVideos[0] ) {
-                console.log( newSelectedVideos )
                 newDisplayNameBody.fileName = newSelectedVideos[0];
                 newDisplayNameBody.selectedFormat = nameFormatList.find( format => format.name == oldVideoObj[ fromFileNamePath(newSelectedVideos[0]) ]?.formatName ) ;
             }
             return newDisplayNameBody;
         }  );
-        handleSelectFormat( nameFormatList[0].name )
+
+
+        let videoFormatted
+        if ( newSelectedVideos.length > 0 ) {
+            videoFormatted = getVideFormatted( newSelectedVideos[0] );
+        }
+        
+        if ( videoFormatted ) {
+            handleSelectFormat( videoFormatted.format )
+        }else{
+            handleSelectFormat( nameFormatList[0].name )
+        } 
     }
 
     async function handleOnClickRename() {
@@ -80,6 +91,7 @@ export default function FileSearch() {
             oldFileName : selectedVideos[0],
             newFileName : toFileNamePath(displayNameBody.fileName),
             formatName : displayNameBody.selectedFormat.name,
+            jsonFields : JSON.stringify( displayNameBody.values )
         }
 
         const data = await renameVideo( params, {} );
@@ -88,6 +100,9 @@ export default function FileSearch() {
     }
 
     function handleSelectFormat( formatName ) {
+
+        console.log( displayNameBody.fileName )
+
 		const format = nameFormatList.find((format) => format.name == formatName );
 
         const valueArray = new Array(format.fields.length);
@@ -141,6 +156,7 @@ export default function FileSearch() {
     const oldVideoNames = videos.message.oldVideos ? videos.message.oldVideos : [];
     const videosUpload = videos.message.uploadVideos ? videos.message.uploadVideos : [];
     const videosFormatted = videos.message.videosFormatted ? videos.message.videosFormatted : [];
+    const videosCompressed = videos.message.videosCompressed ? videos.message.videosCompressed : [];
     const comVideos = videos.message.comVideos ? videos.message.comVideos : [];
 
     const formatCount = {}
@@ -152,9 +168,24 @@ export default function FileSearch() {
     })
 
     //States of the video
-    const formatted = selectedVideos.findIndex( row => { const rowN = row.split(".")[0]; return videosFormatted.findIndex( rowF => rowF.indexOf( rowN ) != -1 ) != -1 } ) != -1;
+    const compressed = selectedVideos.findIndex( row => { const rowN = row.split(".")[0]; return videosCompressed.findIndex( rowF => rowF.indexOf( rowN ) != -1 ) != -1 } ) != -1;
     const toUpload = selectedVideos.findIndex( row => { const rowN = row.split(".")[0]; return videosUpload.findIndex( rowF => rowF.indexOf( rowN ) != -1 ) != -1 } ) != -1;
     const com = selectedVideos.findIndex( row => { const rowN = row.split(".")[0]; return comVideos.findIndex( rowF => rowF.indexOf( rowN ) != -1 ) != -1 } ) != -1;
+
+    function getVideFormatted( fileName ) {
+        const videoName = fileName.substr(0, fileName.lastIndexOf(".") );                            
+        const id = videoName.indexOf("›") == -1 ? null : decodeBase62( videoName.substr( videoName.indexOf("›") + 1 ) );
+        let result = null;
+        if ( id != null )  {
+            videosFormatted.forEach( videoFormatted => {
+                if ( videoFormatted.id == id ) {
+                    result = videoFormatted;
+                    return;
+                }
+            } )
+        }
+        return result;
+    }
 
     return (
         <div className="flex flex-row">
@@ -184,9 +215,14 @@ export default function FileSearch() {
                 { ( !isFetching && isResponseValid ) &&  <div> 
                     <div className="flex flex-col">
                         { [...videosUpload, ...videoNames].map( (fileName) => {
-                            const formatted = videosFormatted.findIndex( row => row.indexOf( fileName.split(".")[0] ) != -1 ) != -1;
-                            const toUpload = videosUpload.findIndex( row => row.indexOf( fileName.split(".")[0] ) != -1 ) != -1;
-                            const com = comVideos.findIndex( row => row.indexOf( fileName.split(".")[0] ) != -1 ) != -1;
+
+                            const videoName = fileName.substr(0, fileName.lastIndexOf(".") );                            
+                            const id = videoName.indexOf("›") == -1 ? null : decodeBase62( videoName.substr( videoName.indexOf("›") + 1 ) );
+
+                            const formatted = videosFormatted.findIndex( row => row.id == id ) != -1;;
+                            const compressed = videosCompressed.findIndex( row => row.indexOf( videoName ) != -1 ) != -1;
+                            const toUpload = videosUpload.findIndex( row => row.indexOf( videoName ) != -1 ) != -1;
+                            const com = comVideos.findIndex( row => row.indexOf( videoName ) != -1 ) != -1;
                             return <VideoRow 
                                 fileName={fileName} 
                                 key={fileName} 
@@ -194,6 +230,7 @@ export default function FileSearch() {
                                 setSelectedVideos={setSelectedVideos} 
                                 afterHandleSelect={afterHandleSelect}
                                 formatted={formatted}
+                                compressed={compressed}
                                 toUpload={toUpload}
                                 com={com}
                             />
@@ -227,7 +264,7 @@ export default function FileSearch() {
                         />
                         <div className="flex flex-col gap-2">
                             <div className="flex flex-row gap-2 min-h-10 justify-start">
-                                <CompressButton selectedVideos={selectedVideos} formatted={formatted} handleVideoPathUpdate={handleVideoPathUpdate} />
+                                <CompressButton selectedVideos={selectedVideos} compressed={compressed} handleVideoPathUpdate={handleVideoPathUpdate} />
                                 <MoveUploadButton selectedVideos={selectedVideos} toUpload={toUpload} handleVideoPathUpdate={handleVideoPathUpdate} />
                                 <ComButton selectedVideos={selectedVideos} toUpload={toUpload} com={com} handleVideoPathUpdate={handleVideoPathUpdate} />
                                 <DeleteButton selectedVideos={selectedVideos} toUpload={toUpload} com={com} handleVideoPathUpdate={handleVideoPathUpdate} />

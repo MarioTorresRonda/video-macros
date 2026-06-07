@@ -1,6 +1,6 @@
 const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-function encodeBase62(num) {
+export function encodeBase62(num) {
   if (num === 0) return chars[0];
 
   let result = "";
@@ -13,7 +13,7 @@ function encodeBase62(num) {
   return result;
 }
 
-function decodeBase62(str) {
+export function decodeBase62(str) {
   let num = 0;
 
   for (const ch of str) {

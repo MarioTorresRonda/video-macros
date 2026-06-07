@@ -12,7 +12,7 @@ export async function displayVideo( params, body ) {
 }
 
 export async function renameVideo( params, body ) {
-    const resData = await apiCall( `/api/video/rename?dirPath=${encodeURIComponent(params.dirPath)}&oldFileName=${encodeURIComponent(params.oldFileName)}&newFileName=${encodeURIComponent(params.newFileName)}&formatName=${encodeURIComponent(params.formatName)}` , body);
+    const resData = await apiCall( `/api/video/rename?dirPath=${encodeURIComponent(params.dirPath)}&oldFileName=${encodeURIComponent(params.oldFileName)}&newFileName=${encodeURIComponent(params.newFileName)}&formatName=${encodeURIComponent(params.formatName)}&jsonFields=${encodeURIComponent(params.jsonFields)}` , body);
     return resData;
 }
 

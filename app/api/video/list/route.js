@@ -1,4 +1,5 @@
 import { fromString, videoFileType } from "@/lib/utils/videoFileType";
+import { openDB, readDB } from "@/util/sqliteUtils";
 import { NextResponse } from "next/server";
 const fs = require('fs');
 const path = require('path');
@@ -37,12 +38,13 @@ export async function GET(request) {
     videoTypes = videoFileType.fromString( videoTypes );
 
     const files = sortVideos( filterVideosTypes( fs.readdirSync(dirPath, 'utf8'), videoFileType.types.filter( type => videoTypes[type] ) ) );
-    const formattedFiles = filterVideosTypes( fs.readdirSync(formattedPath, 'utf8'), [".mp4"] );
+    const formattedFiles = await getFormattedFiles();
+    const compressedFiles = filterVideosTypes( fs.readdirSync(formattedPath, 'utf8'), [".mp4"] );
     let uploadFiles = sortVideos( filterVideosTypes( fs.readdirSync(uploadPath, 'utf8'), videoFileType.types.filter( type => videoTypes[type] ) ) );
     const comsFiles = extractCOMs( uploadFiles );
     uploadFiles = uploadFiles.filter( file => comsFiles.indexOf(file) == -1 );
 
-    return NextResponse.json({ message : { videos: files, oldVideos: oldFiles, uploadVideos: uploadFiles, videosFormatted : formattedFiles, comVideos : comsFiles  } }, { status: 200 });
+    return NextResponse.json({ message : { videos: files, oldVideos: oldFiles, uploadVideos: uploadFiles, videosFormatted : formattedFiles, videosCompressed : compressedFiles, comVideos : comsFiles  } }, { status: 200 });
 }
 
 export function extractsAllCOMS( uploadPath ) {
@@ -159,4 +161,14 @@ function filterVideosTypes( files, fileTypes ) {
     } )
 
     return filterType;
+}
+
+async function getFormattedFiles()  {
+    const db = await openDB();
+    const result = await readDB( db, 'SELECT id, format, fields, fullName FROM videos;');
+    const formattedFiles = [];
+    result.forEach( (row) => {
+        formattedFiles.push( { id : row.id, format: row.format, fields : row.fields, fullName : row.fullName } );
+    });
+    return formattedFiles;
 }

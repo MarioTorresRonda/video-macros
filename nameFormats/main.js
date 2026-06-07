@@ -255,6 +255,21 @@ const silksong = {
     ]
 }
 
+const REPO = {
+    name: "REPO",
+    fields: [
+        { type: types.createDate, length: 8, width: 0 },
+        { type: types.block, char: " REPO", width: 15 },
+        { type: types.block, char: " #", width: 2 },
+        { type: types.count, width: 4 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.select, options: [ "Solo", "Duo", "Trio", "Squad", "5 Jugadores" ], width: 11 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.text, length: 69, width: 69 },
+
+    ]
+}
+
 export const nameFormatList = [
     plainText,
     factorKubata,
@@ -272,7 +287,8 @@ export const nameFormatList = [
     dispatch,
     circuitoTormenta,
     BaldusGate3,
-    silksong
+    silksong,
+    REPO
 ]
 
 export function valuesFromFormat( format, fileName ) {
