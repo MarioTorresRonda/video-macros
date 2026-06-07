@@ -1,25 +1,15 @@
 'use client'
 
-import { useFetch } from "@/hooks/useFetch"
-import { fetchVideos, moveVideo, renameVideo } from "@/http/video";
+import { useFetch } from "@/hooks/useFetch";
+import { fetchVideos, renameVideo } from "@/http/video";
 import { videoFileType } from "@/lib/utils/videoFileType";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import React from 'react';
-import DisplayVideo from "./leftPanel/DisplayVideo";
-import Checkbox from "@/components/Commons/Checkbox";
+import { useContext, useEffect, useState } from "react";
 import VideoRow from "./VideoRow";
-import DisplayName from "./leftPanel/DisplayName";
 import { fromFileNamePath, nameFormatList, toFileNamePath } from "@/nameFormats/main";
 import { types } from "@/nameFormats/fields";
 import { OptionContext } from "@/store/option-context";
-import { updateOptions } from "@/http/options";
-import PrettyButton from "@/components/Commons/PrettyButton";
-import CompressButton from "./buttons/CompressButton";
-import MoveUploadButton from "./buttons/MoveUploadButton";
-import MergeButton from "./buttons/MergeButton";
-import ComButton from "./buttons/ComButton";
-import DeleteButton from "./buttons/DeleteButton";
 import { decodeBase62 } from "@/util/base62";
+import VideoInfoPanel from "./VideoInfoPanel";
 
 export default function FileSearch() {
 
@@ -48,19 +38,8 @@ export default function FileSearch() {
         selectedFormat : nameFormatList[0]
     })
 
-    const [fileNameType, setFileNameType] = useState(false)
 
     const [oldVideosHeight, setOldVideosHeight] = useState("h-0")
-    
-    const fileNameFormatted = selectedVideos.length > 0 ? fromFileNamePath( selectedVideos[0] ) : "";
-
-    function handleVideoPathUpdate() {
-        setBody( ( oldBody ) => {
-            const newBody = {...oldBody};
-            return newBody;
-        });
-        setSelectedVideos([])
-    }
     
     function afterHandleSelect( newSelectedVideos ) {
         setDisplayNameBody( oldDisplayNameBody => {
@@ -76,51 +55,37 @@ export default function FileSearch() {
         let videoFormatted
         if ( newSelectedVideos.length > 0 ) {
             videoFormatted = getVideFormatted( newSelectedVideos[0] );
+            console.log( videoFormatted )
+            videoFormatted = videoFormatted.format != "";
         }
         
         if ( videoFormatted ) {
             handleSelectFormat( videoFormatted.format )
         }else{
-            handleSelectFormat( nameFormatList[0].name )
+            handleSelectFormat( nameFormatList[0].name  )
         } 
     }
 
-    async function handleOnClickRename() {
-        const params = {
-            dirPath : body.url,
-            oldFileName : selectedVideos[0],
-            newFileName : toFileNamePath(displayNameBody.fileName),
-            formatName : displayNameBody.selectedFormat.name,
-            jsonFields : JSON.stringify( displayNameBody.values )
-        }
-
-        const data = await renameVideo( params, {} );
-
-        handleVideoPathUpdate();
-    }
-
     function handleSelectFormat( formatName ) {
-
-        console.log( displayNameBody.fileName )
-
-		const format = nameFormatList.find((format) => format.name == formatName );
+        
+        const format = nameFormatList.find((format) => format.name == formatName );
 
         const valueArray = new Array(format.fields.length);
-		format.fields.forEach((field, index) => {
-			if (field.type == types.text) {
-				valueArray[index] = field.default ? field.default : "";
-			} else if (field.type == types.number) {
-				valueArray[index] = field.default ? field.default : 0;
-			} else if (field.type == types.select) {
-				valueArray[index] = field.default ? field.options[field.default] : field.options[0];
-			} else if (field.type == types.block) {
-				valueArray[index] = field.char;
-			} else if (field.type == types.createDate) {
-				valueArray[index] = obtainVideoCreateDate();
-			} else if (field.type == types.count) {
-				valueArray[index] = obtainFormatCount( format );
-			}
-		});
+        format.fields.forEach((field, index) => {
+            if (field.type == types.text) {
+                valueArray[index] = field.default ? field.default : "";
+            } else if (field.type == types.number) {
+                valueArray[index] = field.default ? field.default : 0;
+            } else if (field.type == types.select) {
+                valueArray[index] = field.default ? field.options[field.default] : field.options[0];
+            } else if (field.type == types.block) {
+                valueArray[index] = field.char;
+            } else if (field.type == types.createDate) {
+                valueArray[index] = obtainVideoCreateDate();
+            } else if (field.type == types.count) {
+                valueArray[index] = obtainFormatCount( format );
+            }
+        });
 
         setDisplayNameBody( oldDisplayNameBody => {
             const newDisplayNameBody = {...oldDisplayNameBody};
@@ -129,7 +94,7 @@ export default function FileSearch() {
             
             return newDisplayNameBody;
         }  );
-	}
+    }
 
     function obtainVideoCreateDate() {
         if ( selectedVideos && selectedVideos.length == 1 ) {
@@ -139,14 +104,13 @@ export default function FileSearch() {
         return "";
     }
 
-	function obtainFormatCount( format ) {
+    function obtainFormatCount( format ) {
 
         const actualFormat = format ? format : displayNameBody.selectedFormat;
-		const counter = formatCount[actualFormat.name] ? formatCount[actualFormat.name] + 1 : 1;
+        const counter = formatCount[actualFormat.name] ? formatCount[actualFormat.name] + 1 : 1;
 
-		return counter;
+        return counter;
     }
-
     
 	const {isFetching, fetchedData: videos, error, setFetchedData: setVideos} = useFetch(fetchVideos, body, { message: [] }, []);
 
@@ -166,11 +130,6 @@ export default function FileSearch() {
         formatCount[formatName]= !formatCount[formatName] ? 1 : formatCount[formatName] + 1
         oldVideoObj[ fromFileNamePath(fileName) ] = { formatName };
     })
-
-    //States of the video
-    const compressed = selectedVideos.findIndex( row => { const rowN = row.split(".")[0]; return videosCompressed.findIndex( rowF => rowF.indexOf( rowN ) != -1 ) != -1 } ) != -1;
-    const toUpload = selectedVideos.findIndex( row => { const rowN = row.split(".")[0]; return videosUpload.findIndex( rowF => rowF.indexOf( rowN ) != -1 ) != -1 } ) != -1;
-    const com = selectedVideos.findIndex( row => { const rowN = row.split(".")[0]; return comVideos.findIndex( rowF => rowF.indexOf( rowN ) != -1 ) != -1 } ) != -1;
 
     function getVideFormatted( fileName ) {
         const videoName = fileName.substr(0, fileName.lastIndexOf(".") );                            
@@ -239,43 +198,19 @@ export default function FileSearch() {
                     </div>
                 </div>}
             </div>
-            { selectedVideos.length > 0 &&
-                <div className="w-1/2 fixed top-0 right-0">
-                    <div className="m-2 flex flex-col gap-2 ">
-                        <div className="text-2xl text-white flex flex-row justify-between"> 
-                            { fileNameType ? selectedVideos[0] : fileNameFormatted }
-                            <PrettyButton 
-                                onClick={() => { setFileNameType( !fileNameType ) }}
-                            >
-                                {fileNameType ? "URL" : "FORMAT"}
-                            </PrettyButton>
-                        </div>
-
-                        <DisplayVideo className="w-full" url={ (toUpload ? uploadFolder : mainFolder) +"\\"+selectedVideos[0] } />
-                        
-                        <DisplayName 
-                            toUpload={toUpload} 
-                            displayNameBody={displayNameBody} 
-                            setDisplayNameBody={setDisplayNameBody} 
-                            handleOnClickRename={handleOnClickRename} 
-                            handleSelectFormat={handleSelectFormat} 
-                            selectedVideos={selectedVideos} 
-                            obtainFormatCount={obtainFormatCount}
-                        />
-                        <div className="flex flex-col gap-2">
-                            <div className="flex flex-row gap-2 min-h-10 justify-start">
-                                <CompressButton selectedVideos={selectedVideos} compressed={compressed} handleVideoPathUpdate={handleVideoPathUpdate} />
-                                <MoveUploadButton selectedVideos={selectedVideos} toUpload={toUpload} handleVideoPathUpdate={handleVideoPathUpdate} />
-                                <ComButton selectedVideos={selectedVideos} toUpload={toUpload} com={com} handleVideoPathUpdate={handleVideoPathUpdate} />
-                                <DeleteButton selectedVideos={selectedVideos} toUpload={toUpload} com={com} handleVideoPathUpdate={handleVideoPathUpdate} />
-                            </div>
-                            <div className="flex flex-row gap-2 h-10 justify-start">
-                                { selectedVideos.length > 1 && <MergeButton selectedVideos={selectedVideos} toUpload={toUpload} /> }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
+            <VideoInfoPanel
+                setBody={setBody}
+                setSelectedVideos={setSelectedVideos}
+                displayNameBody={displayNameBody}
+                setDisplayNameBody={setDisplayNameBody}
+                obtainFormatCount={obtainFormatCount}
+                handleSelectFormat={handleSelectFormat}
+                selectedVideos={selectedVideos}
+                videosFormatted={videosFormatted}
+                videosCompressed={videosCompressed}
+                videosUpload={videosUpload}
+                comVideos={comVideos}
+            />
         </div>
 	);
 }

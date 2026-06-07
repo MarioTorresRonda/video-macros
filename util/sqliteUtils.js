@@ -33,4 +33,9 @@ export async function createDB( db ) {
   if ( result.length == 0) {
       await db.exec('CREATE TABLE compress ( dirPath TEXT, fileName TEXT )')
   }
+
+    result = await db.all(`SELECT name FROM sqlite_master WHERE type='table' AND name='merge';`)
+  if ( result.length == 0) {
+      await db.exec('CREATE TABLE merge ( mergeID TEXT, videoID TEXT )')
+  }
 } 

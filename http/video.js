@@ -31,6 +31,11 @@ export async function comVideo( params, body ) {
     return resData;
 }
 
+export async function setIDVideo( params, body ) {
+    const resData = await apiCall( `/api/video/setID?dirPath=${encodeURIComponent(params.mainFolder)}&fileName=${encodeURIComponent(params.fileName)}&com=${encodeURIComponent(params.com)}`, body);
+    return resData;
+}
+
 export async function mergeVideo( params, body ) {
 
     const filesCount = params.files.length;

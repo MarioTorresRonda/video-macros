@@ -16,8 +16,6 @@ export default async function compressService() {
                 compress.push( { dirPath : row.dirPath , fileName : row.fileName } );
             });
 
-            console.log( compress );
-
             for (let index = 0; index < compress.length; index++) {
                 const compressVideo = compress[index];
 
