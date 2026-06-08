@@ -1,7 +1,7 @@
 'use client'
 
 import { useFetch } from "@/hooks/useFetch";
-import { fetchVideos, renameVideo } from "@/http/video";
+import { fetchInfoVideos, fetchMergeVideos, fetchVideos, renameVideo } from "@/http/video";
 import { videoFileType } from "@/lib/utils/videoFileType";
 import { useContext, useEffect, useState } from "react";
 import VideoRow from "./VideoRow";
@@ -31,7 +31,6 @@ export default function FileSearch() {
     }, [mainFolder, formattedFolder, uploadFolder, setBody])
 
     const [selectedVideos, setSelectedVideos] = useState( [] )
-
     const [displayNameBody, setDisplayNameBody] = useState( {
         fileName : "",
         values: [],
@@ -55,8 +54,7 @@ export default function FileSearch() {
         let videoFormatted
         if ( newSelectedVideos.length > 0 ) {
             videoFormatted = getVideFormatted( newSelectedVideos[0] );
-            console.log( videoFormatted )
-            videoFormatted = videoFormatted.format != "";
+            videoFormatted = videoFormatted ? videoFormatted.format != "" : false;
         }
         
         if ( videoFormatted ) {
@@ -113,15 +111,23 @@ export default function FileSearch() {
     }
     
 	const {isFetching, fetchedData: videos, error, setFetchedData: setVideos} = useFetch(fetchVideos, body, { message: [] }, []);
-
+	const {mergeFetching, fetchedData: mergeFiles, mergeError, setFetchedData: setMergeVideos } = useFetch(fetchMergeVideos, null, { message: [] }, []);
     const isResponseValid = videos.message.length != 0 && videos.message.videos != null;
 
+    const [infoBody, setInfoBody] = useState( { 
+        mainVideos : [],
+        uploadVideos: [],
+        mainFolder : mainFolder,
+        uploadFolder : uploadFolder
+    } )
+    
     const videoNames = videos.message.videos ? videos.message.videos : [];
     const oldVideoNames = videos.message.oldVideos ? videos.message.oldVideos : [];
     const videosUpload = videos.message.uploadVideos ? videos.message.uploadVideos : [];
     const videosFormatted = videos.message.videosFormatted ? videos.message.videosFormatted : [];
     const videosCompressed = videos.message.videosCompressed ? videos.message.videosCompressed : [];
     const comVideos = videos.message.comVideos ? videos.message.comVideos : [];
+    const mergeVideos = mergeFiles ? mergeFiles.message.mergeFiles :  {};
 
     const formatCount = {}
     const oldVideoObj = {}
@@ -145,6 +151,18 @@ export default function FileSearch() {
         }
         return result;
     }
+
+    useEffect(() => {
+        setInfoBody( (oldBody) =>  {
+            const newBody = {...oldBody};
+            newBody.mainVideos = videos.message.videos ? videos.message.videos : [];
+            newBody.uploadVideos = videos.message.uploadVideos ? videos.message.uploadVideos : [];
+            newBody.mainFolder = mainFolder;
+            newBody.uploadFolder = uploadFolder;
+            return newBody;
+        } )
+    }, [videos, mainFolder, uploadFolder, setInfoBody])
+	const {InfoFetching, fetchedData: infoFiles, infoError, setFetchedData: setInfoVideos } = useFetch(fetchInfoVideos, infoBody, { message: [] }, []);
 
     return (
         <div className="flex flex-row">
@@ -182,16 +200,20 @@ export default function FileSearch() {
                             const compressed = videosCompressed.findIndex( row => row.indexOf( videoName ) != -1 ) != -1;
                             const toUpload = videosUpload.findIndex( row => row.indexOf( videoName ) != -1 ) != -1;
                             const com = comVideos.findIndex( row => row.indexOf( videoName ) != -1 ) != -1;
+                            const merge = mergeVideos[id] != null;
+
                             return <VideoRow 
                                 fileName={fileName} 
                                 key={fileName} 
                                 selectedVideos={selectedVideos} 
                                 setSelectedVideos={setSelectedVideos} 
                                 afterHandleSelect={afterHandleSelect}
+                                infoFiles={infoFiles}
                                 formatted={formatted}
                                 compressed={compressed}
                                 toUpload={toUpload}
                                 com={com}
+                                merge={merge}
                             />
                         } ) }
                         <div className="bg-slate-600 h-0.5" ></div>
@@ -210,6 +232,8 @@ export default function FileSearch() {
                 videosCompressed={videosCompressed}
                 videosUpload={videosUpload}
                 comVideos={comVideos}
+                mergeVideos={mergeVideos}
+                infoFiles={infoFiles}
             />
         </div>
 	);

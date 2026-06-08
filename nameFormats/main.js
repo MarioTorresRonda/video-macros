@@ -353,6 +353,8 @@ export function toYoutubeName( fileName ) {
     const index = fileName.indexOf(")") == -1 ? 8 : fileName.indexOf(")") + 1;
     const date = fileName.substr(0, 8 );
     fileName = fileName.substr(index) + " | " + date;
+    
+    fileName = fileName.replaceAll( /([›])\w+/g, "" );
 
     fileName = fileName.replaceAll( /(\|(\s*\|)+)/g, "|" );
     fileName = fileName.replaceAll( /\s{2,}/g, " " );

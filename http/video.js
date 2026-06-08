@@ -5,6 +5,11 @@ export async function fetchVideos( params, body ) {
     return resData;
 }
 
+export async function fetchMergeVideos( params, body ) {
+    const resData = await apiCall( `/api/video/mergeList` , body);
+    return resData;
+}
+
 export async function displayVideo( params, body ) {
     body = { headers: { 'Content-Type': 'video/mkv' }, ...body }
     let response =  await blobCall( `/api/video/display?videoPath=${encodeURIComponent(params.url)}`, body);
@@ -48,4 +53,30 @@ export async function mergeVideo( params, body ) {
 export async function deleteVideo( params, body ) {
     const resData = await apiCall( `/api/video/delete?dirPath=${encodeURIComponent(params.mainFolder)}&fileName=${encodeURIComponent(params.fileName)}&com=${encodeURIComponent(params.com)}`, body);
     return resData;
+}
+
+export async function infoVideo( params, body ) {
+    const resData = await apiCall( `/api/video/info?dirPath=${encodeURIComponent(params.mainFolder)}&fileName=${encodeURIComponent(params.fileName)}`, body);
+    return resData;
+}
+
+export async function fetchInfoVideos( params, body ) {
+
+    console.log( params );
+
+    const InfoVideos = {};
+
+    const mainVideos = params.mainVideos;
+    for (let index = 0; index < mainVideos.length; index++) {
+        const video = mainVideos[index];
+        InfoVideos[video] = (await infoVideo( { mainFolder : params.mainFolder, fileName: video }, body )).message.format;
+    }
+    
+    const uploadVideos = params.uploadVideos;
+        for (let index = 0; index < uploadVideos.length; index++) {
+        const video = uploadVideos[index];
+        InfoVideos[video] = (await infoVideo( { mainFolder : params.uploadFolder, fileName: video }, body )).message.format;
+    }
+
+    return InfoVideos;
 }
