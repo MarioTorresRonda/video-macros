@@ -27,10 +27,6 @@ export default function VideoRow( { fileName, selectedVideos, setSelectedVideos,
         } 
     } );
 
-    if ( infoFiles )  {
-        console.log(  )
-    }
-
     return <div className=" h-9 flex flex-col justify-center">
         <div className="bg-slate-600 h-0.5" ></div>
         <div className={`flex flex-row gap-3 flex-1 ml-3 ${ merge ? "bg-gray-700" : ""  }`}>

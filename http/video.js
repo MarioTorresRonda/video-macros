@@ -61,9 +61,6 @@ export async function infoVideo( params, body ) {
 }
 
 export async function fetchInfoVideos( params, body ) {
-
-    console.log( params );
-
     const InfoVideos = {};
 
     const mainVideos = params.mainVideos;

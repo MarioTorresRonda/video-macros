@@ -87,7 +87,7 @@ export default function VideoInfoPanel( { setBody, setSelectedVideos, displayNam
                                 const videoDuration = infoFiles && infoFiles[video.fullName] ? infoFiles[video.fullName].duration : 0
                                 const startTime = durationToTime( duration )
                                 duration += parseFloat( videoDuration );
-                                return <p key={video.id} > { startTime } - { toYoutubeName( video.fullName ) } </p>
+                                return <p key={video.videoID } > { startTime } - { toYoutubeName( video.fullName ) } </p>
                             } ) } 
                         </div>
                     </>  }

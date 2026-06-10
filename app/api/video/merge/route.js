@@ -1,6 +1,8 @@
 const { spawn } = require('child_process');
 import { NextResponse } from "next/server";
 import { extractsAllCOMS } from "../list/route";
+import { openDB, readDB } from "@/util/sqliteUtils";
+import { decodeBase62, encodeBase62 } from "@/util/base62";
 
 export async function GET(request) {
   
@@ -16,7 +18,7 @@ export async function GET(request) {
         return NextResponse.json({ message : "uploadPath invalid"  }, { status: 422 });
     }
 
-    const newFileName = searchParams.get('newFileName');
+    let newFileName = searchParams.get('newFileName');
     if ( !newFileName ) {
         return NextResponse.json({ message : "newFileName invalid"  }, { status: 422 });
     }
@@ -34,21 +36,40 @@ export async function GET(request) {
       }
       files[index] = file;
     }
-
+    
+    
+    const db = await openDB();
+    
+    const maxIdResult = await readDB( db, 'SELECT max(id) FROM videos;')
+    const id = maxIdResult[0]["max(id)"] ? Number( maxIdResult[0]["max(id)"] ) + 1 : 0;
+    console.log( "next id is: " + id);
+    newFileName = `${newFileName}›${encodeBase62(id)}`;
+    
     const response = await videoApiPromise( dirPath, newFileName, files );
     
+    const query = `INSERT INTO videos (id, format, fields, fullName) VALUES ( '${id}', '', '[]', '${newFileName}.mkv' )`
+    await db.exec(query)
+    console.log( "Inserted video data: " + query);
+
+    for (let index = 0; index < files.length; index++) {
+      const file = files[index];
+      const fileName = file.substr(0, file.lastIndexOf(".") );
+      const fileId = decodeBase62( fileName.substr( fileName.indexOf("›") + 1 ) );
+      const query = `INSERT INTO merge ( mergeID, videoID ) VALUES ( '${id}', '${fileId}'  )`
+      console.log( "Inserted merge data: " + query);
+      await db.exec(query)
+    }
+        
     const allComs = extractsAllCOMS( uploadPath )
     const filteredComs = allComs.filter( comFile =>  {
-      console.log( comFile );
       return files.findIndex( file => { 
         const fileName =  file.split(".").slice(0, file.split(".").length - 1 ).join("")
         return comFile.indexOf( fileName ) != -1 
       } ) != -1
     } )
 
-      const response2 = await videoApiPromise( dirPath, newFileName + "_COM", filteredComs );
+    const response2 = await videoApiPromise( dirPath, newFileName + "_COM", filteredComs );
 
-    console.log(  );
     return NextResponse.json({ message : response }, { status: 200 });  
 }
 

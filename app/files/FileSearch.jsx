@@ -54,7 +54,7 @@ export default function FileSearch() {
         let videoFormatted
         if ( newSelectedVideos.length > 0 ) {
             videoFormatted = getVideFormatted( newSelectedVideos[0] );
-            videoFormatted = videoFormatted ? videoFormatted.format != "" : false;
+            videoFormatted = ( videoFormatted && videoFormatted.format != "" ) ? videoFormatted : false;
         }
         
         if ( videoFormatted ) {
@@ -65,7 +65,7 @@ export default function FileSearch() {
     }
 
     function handleSelectFormat( formatName ) {
-        
+        console.log( formatName )
         const format = nameFormatList.find((format) => format.name == formatName );
 
         const valueArray = new Array(format.fields.length);
