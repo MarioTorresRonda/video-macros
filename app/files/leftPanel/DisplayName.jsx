@@ -34,7 +34,7 @@ export default function DisplayName( { displayNameBody, setDisplayNameBody, sele
 
 	return (
 		<>
-			{ !toUpload && <div className="flex flex-row gap-2 h-10 justify-between">
+			{ !toUpload && <div className="flex flex-row gap-2 h-10 justify-between overflow-x-auto">
 				<select
 					className="bg-slate-700 px-4 w-1/4 outline-none text-white rounded-lg border-2 transition-colors duration-100 border-solid focus:border-slate-400 border-slate-800"
 					value={displayNameBody.selectedFormat.name}
@@ -57,7 +57,6 @@ export default function DisplayName( { displayNameBody, setDisplayNameBody, sele
 			</div> }
 			<div className="flex flex-row">
 				{!toUpload && <DisplayNameArray displayNameBody={displayNameBody} obtainFormatCount={obtainFormatCount} onHandleFieldChange={onHandleFieldChange} /> }
-				{ toUpload && <DisplayNameResult displayNameBody={displayNameBody}/>}
 			</div>
 		</>
 	);

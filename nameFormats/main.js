@@ -139,7 +139,15 @@ const minecraftCobblemon = {
         { type: types.block, char: " #", width: 1 },
         { type: types.count, width: 2 },
         { type: types.block, char: " | ", width: 1 },
-    ]
+    ],
+    thumbnail: {
+        bg: "https://i.redd.it/cobbletowns-a-data-pack-that-adds-custom-pok%C3%A9mon-themed-v0-yg0p0ed3hx0d1.png?width=2880&format=png&auto=webp&s=c7616e67e29d623934cfd1d9ef8b2bc360417ece",
+        text1: "Minecraft Cobbleverse",
+        text2: "",
+        text3: { comF: "No talking", comT: "COM" },
+        text4: { count: true }
+
+    }
 }
 
 const wizardWithAGun = {

@@ -65,7 +65,6 @@ export default function FileSearch() {
     }
 
     function handleSelectFormat( formatName ) {
-        console.log( formatName )
         const format = nameFormatList.find((format) => format.name == formatName );
 
         const valueArray = new Array(format.fields.length);
@@ -142,13 +141,19 @@ export default function FileSearch() {
         const id = videoName.indexOf("›") == -1 ? null : decodeBase62( videoName.substr( videoName.indexOf("›") + 1 ) );
         let result = null;
         if ( id != null )  {
-            videosFormatted.forEach( videoFormatted => {
-                if ( videoFormatted.id == id ) {
-                    result = videoFormatted;
-                    return;
-                }
-            } )
+            result = getVideFormattedById( id );
         }
+        return result;
+    }
+
+    function getVideFormattedById( id ) {
+        let result = null;
+        videosFormatted.forEach( videoFormatted => {
+            if ( videoFormatted.id == id ) {
+                result = videoFormatted;
+                return;
+            }
+        } )
         return result;
     }
 
@@ -234,6 +239,7 @@ export default function FileSearch() {
                 comVideos={comVideos}
                 mergeVideos={mergeVideos}
                 infoFiles={infoFiles}
+                getVideFormattedById={getVideFormattedById}
             />
         </div>
 	);
