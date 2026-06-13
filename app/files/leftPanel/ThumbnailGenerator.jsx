@@ -48,7 +48,7 @@ function fillText( ctx, size, color, text, vector2, orientation )  {
     ctx.fillText(text, vector2.x, vector2.y);
 }
 
-export default function ThumbnailGenerator( { canvasRef, formatName, bg, text1, text2, text3, text4 } ) {
+export default function ThumbnailGenerator( { canvasRef, bg, text1, text2, text3, text4 } ) {
   // 1. Manage input states
   const [bgImageUrl, setBgImageUrl] = useState(bg);
   
@@ -84,16 +84,16 @@ export default function ThumbnailGenerator( { canvasRef, formatName, bg, text1, 
       fillText( ctx, textSize, "#ff4444", "Failed to load background image.", TransformCanvas( canvas, simpleTextLocation.topLeft ), orientation.left )
     };
 
-  }, [ bgImageUrl, textColor, textSize ]); // Triggers redraw automatically on change
+  }, [ bgImageUrl, textColor, textSize, text1, text2, text3, text4 ]); // Triggers redraw automatically on change
 
   return (
-    <div className="flex gap-2 p-2">
+    <div className="flex gap-2 p-2 w-90 h-50.5">
       <div className="flex flex-col items-center">
         <canvas 
           ref={canvasRef} 
           width={1920} 
           height={1080} 
-          className="w-[360px] h-[202px]"
+          className="w-full h-full"
           style={{ border: "1px solid #ddd", borderRadius: "8px", maxWidth: "100%" }}
         />
       </div>

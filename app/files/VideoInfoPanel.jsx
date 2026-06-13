@@ -13,7 +13,8 @@ import { OptionContext } from '@/store/option-context';
 import { decodeBase62 } from '@/util/base62';
 import { durationToTime } from '@/util/time';
 import ThumbnailGenerator from './leftPanel/ThumbnailGenerator';
-import { types } from '@/nameFormats/fields';
+import { formatThumbnailObject } from '@/nameFormats/formatText';
+import VideoMergeInfo from './leftPanel/videoMergeInfo';
 
 export default function VideoInfoPanel( { setBody, setSelectedVideos, displayNameBody, setDisplayNameBody, handleSelectFormat, obtainFormatCount, selectedVideos, videosFormatted, videosCompressed, videosUpload, comVideos, mergeVideos, infoFiles, getVideFormattedById } ) {
 
@@ -21,6 +22,7 @@ export default function VideoInfoPanel( { setBody, setSelectedVideos, displayNam
     
     const canvasRef = useRef(null);
     const [fileNameType, setFileNameType] = useState(false)
+    const [COM, setCOM] = useState(false)
     
     //States of the video
     const formatted = ArrayContainsElements( { mainArray : selectedVideos, searchArray: videosFormatted, mainMod : removeFileType, searchMod : (searchElement) => removeFileType( searchElement.fullName ) }  );
@@ -34,7 +36,6 @@ export default function VideoInfoPanel( { setBody, setSelectedVideos, displayNam
     const videoName = fileName.substr(0, fileName.lastIndexOf(".") );                            
     const id = videoName.indexOf("›") == -1 ? null : decodeBase62( videoName.substr( videoName.indexOf("›") + 1 ) );
     const videoMerge = mergeVideos != null && Object.keys(mergeVideos).length > 0 && id != null ? mergeVideos[id] : null;
-    const videoFormatted = videoMerge ?  getVideFormattedById( videoMerge[0].videoID  ) : null;
 
     async function handleOnClickRename() {
         const params = {
@@ -76,34 +77,12 @@ export default function VideoInfoPanel( { setBody, setSelectedVideos, displayNam
         link.click();
     };
 
-    const isCom = false;
-
-    function formatThumbnailText( text, videoFormatted, format ) {
-
-        const countIndex = format.fields.findIndex( field => field.type == types.count )
-        text = Object.hasOwn( text, "count" ) ? videoFormatted.fields[countIndex] : text;
-
-        text = Object.hasOwn( text, "comF" ) ? ( isCom ? text.comT : text.comF )  : text;
-        return text;
-    }
-
-    let duration = 0
     let formatThumbnailObj = {}
-    if ( videoFormatted != null ) {
-        const format = nameFormatList.find( format => format.name == videoFormatted.format );
-        formatThumbnailObj = format.thumbnail;
-        if ( !Array.isArray( videoFormatted.fields ) ) {
-            videoFormatted.fields = JSON.parse( videoFormatted.fields );
-        }
-
-        console.log( videoFormatted, format );
-        formatThumbnailObj.text1 = formatThumbnailText( formatThumbnailObj.text1, videoFormatted, format )
-        formatThumbnailObj.text2 = formatThumbnailText( formatThumbnailObj.text2, videoFormatted, format )
-        formatThumbnailObj.text3 = formatThumbnailText( formatThumbnailObj.text3, videoFormatted, format )
-        formatThumbnailObj.text4 = formatThumbnailText( formatThumbnailObj.text4, videoFormatted, format )
+    if ( videoMerge && videoMerge.length > 0 != null ) {
+        const videoFormattedArray = videoMerge.map( ( merge => getVideFormattedById( merge.videoID  ) ) );
+        const format = nameFormatList.find( format => format.name == videoFormattedArray[0].format );
+        formatThumbnailObj = {...formatThumbnailObject( format, videoFormattedArray, COM )};
     }
-
-
 
     return <>
         { selectedVideos.length > 0 &&
@@ -135,14 +114,7 @@ export default function VideoInfoPanel( { setBody, setSelectedVideos, displayNam
                         obtainFormatCount={obtainFormatCount}
                     />
                     { videoMerge != null && <div className='flex flex-row gap-2'> 
-                        <div className="flex flex-col gap-1 rounded-md text-white text-xl overflow-auto">
-                            { videoMerge.map( (video) => {
-                                const videoDuration = infoFiles && infoFiles[video.fullName] ? infoFiles[video.fullName].duration : 0
-                                const startTime = durationToTime( duration )
-                                duration += parseFloat( videoDuration );
-                                return <p className='text-nowrap' key={video.videoID } > { startTime } - { toYoutubeName( video.fullName ) } </p>
-                            } ) } 
-                        </div>
+                        <VideoMergeInfo infoFiles={infoFiles} videoMerge={videoMerge} />
                         <ThumbnailGenerator 
                             canvasRef={canvasRef}
                             bg={formatThumbnailObj.bg}
@@ -161,7 +133,10 @@ export default function VideoInfoPanel( { setBody, setSelectedVideos, displayNam
                                 <ComButton selectedVideos={selectedVideos} toUpload={toUpload} com={com} handleVideoPathUpdate={handleVideoPathUpdate} />
                             </>  }
                             <DeleteButton selectedVideos={selectedVideos} toUpload={toUpload} com={com} handleVideoPathUpdate={handleVideoPathUpdate} />
-                            { videoMerge != null && <PrettyButton onClick={handleDownload}> Descargar Portada </PrettyButton> }
+                            { videoMerge != null && <>
+                                <PrettyButton onClick={handleDownload}> Descargar Portada </PrettyButton> 
+                                <PrettyButton onClick={() => {setCOM( !COM )}}> { COM ? "COM" : "NOT" } </PrettyButton> 
+                            </>}
                         </div>
                         { selectedVideos.length > 1 && <div className="flex flex-row gap-2 h-10 justify-start">
                             <MergeButton selectedVideos={selectedVideos} toUpload={toUpload} />

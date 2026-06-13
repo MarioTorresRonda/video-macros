@@ -171,7 +171,7 @@ export default function FileSearch() {
 
     return (
         <div className="flex flex-row">
-            <div className="w-1/2 flex flex-col gap-2">
+            <div className="w-1/2 flex flex-col gap-2 pt-6">
                 <div className="flex flex-row justify-between">
                     <h2 className="text-xl text-white"> Lista de videos </h2>
                     <p className="text-xl text-stone-200">{ videoNames.length }</p>
