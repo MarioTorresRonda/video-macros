@@ -8,15 +8,16 @@ import MergeButton from "./buttons/MergeButton";
 import ComButton from "./buttons/ComButton";
 import DeleteButton from "./buttons/DeleteButton";
 import SetIDButton from "./buttons/SetIDButton";
-import { fromFileNamePath, nameFormatList, toYoutubeName } from '@/nameFormats/main';
+import { fromFileNamePath, nameFormatList, toFileNamePath, toYoutubeName } from '@/nameFormats/main';
 import { OptionContext } from '@/store/option-context';
 import { decodeBase62 } from '@/util/base62';
 import { durationToTime } from '@/util/time';
 import ThumbnailGenerator from './leftPanel/ThumbnailGenerator';
 import { formatThumbnailObject } from '@/nameFormats/formatText';
 import VideoMergeInfo from './leftPanel/videoMergeInfo';
+import { renameVideo } from '@/http/video';
 
-export default function VideoInfoPanel( { setBody, setSelectedVideos, displayNameBody, setDisplayNameBody, handleSelectFormat, obtainFormatCount, selectedVideos, videosFormatted, videosCompressed, videosUpload, comVideos, mergeVideos, infoFiles, getVideFormattedById } ) {
+export default function VideoInfoPanel( { body, setBody, setSelectedVideos, displayNameBody, setDisplayNameBody, handleSelectFormat, obtainFormatCount, selectedVideos, videosFormatted, videosCompressed, videosUpload, comVideos, mergeVideos, infoFiles, getVideFormattedById } ) {
 
     const { mainFolder, formattedFolder, uploadFolder } = useContext( OptionContext );
     
@@ -36,6 +37,17 @@ export default function VideoInfoPanel( { setBody, setSelectedVideos, displayNam
     const videoName = fileName.substr(0, fileName.lastIndexOf(".") );                            
     const id = videoName.indexOf("›") == -1 ? null : decodeBase62( videoName.substr( videoName.indexOf("›") + 1 ) );
     const videoMerge = mergeVideos != null && Object.keys(mergeVideos).length > 0 && id != null ? mergeVideos[id] : null;
+
+    console.log( id, displayNameBody, displayNameBody.id )
+    if ( id != null && displayNameBody.id == null )  {
+        console.log( JSON.parse( getVideFormattedById(id).fields ) )
+        setDisplayNameBody( oldDisplayNameBody => {
+            const newDisplayNameBody = {...oldDisplayNameBody};
+            newDisplayNameBody.values = JSON.parse( getVideFormattedById(id).fields );
+            newDisplayNameBody.id = id;
+            return newDisplayNameBody;
+        }  );
+    }
 
     async function handleOnClickRename() {
         const params = {

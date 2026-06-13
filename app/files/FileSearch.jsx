@@ -20,6 +20,8 @@ export default function FileSearch() {
         types: videoFileType.toString(videoFileType.defaultObj)
     } )
 
+    const [localSearch, setLocalSearch] = useState("")
+
     useEffect(() => {
         setBody( ( oldBody ) => {
             const newBody = {...oldBody};
@@ -41,6 +43,11 @@ export default function FileSearch() {
     const [oldVideosHeight, setOldVideosHeight] = useState("h-0")
     
     function afterHandleSelect( newSelectedVideos ) {
+        if ( newSelectedVideos.length == 0 ) {
+            handleSelectFormat()
+            return;
+        }
+
         setDisplayNameBody( oldDisplayNameBody => {
             const newDisplayNameBody = {...oldDisplayNameBody};
             if ( newSelectedVideos[0] ) {
@@ -65,6 +72,15 @@ export default function FileSearch() {
     }
 
     function handleSelectFormat( formatName ) {
+        if ( !formatName ) {
+            setDisplayNameBody( {
+                fileName : "",
+                values: [],
+                selectedFormat : nameFormatList[0]
+            } )
+            return;
+        }
+
         const format = nameFormatList.find((format) => format.name == formatName );
 
         const valueArray = new Array(format.fields.length);
@@ -88,7 +104,7 @@ export default function FileSearch() {
             const newDisplayNameBody = {...oldDisplayNameBody};
             newDisplayNameBody.selectedFormat = format;
             newDisplayNameBody.values = valueArray;
-            
+            newDisplayNameBody.id = null;
             return newDisplayNameBody;
         }  );
     }
@@ -167,7 +183,25 @@ export default function FileSearch() {
             return newBody;
         } )
     }, [videos, mainFolder, uploadFolder, setInfoBody])
+
 	const {InfoFetching, fetchedData: infoFiles, infoError, setFetchedData: setInfoVideos } = useFetch(fetchInfoVideos, infoBody, { message: [] }, []);
+
+    let allVideos = [...videosUpload, ...videoNames];
+    allVideos = allVideos.filter( fileName => {
+        return fileName.toUpperCase().indexOf( localSearch.toUpperCase() ) != -1
+    })
+
+    let allDiskSpace = 0;
+    if (  Object.keys( infoFiles ).length > 0 )  {
+
+        allVideos.forEach( ( fileName ) => {
+            const videoName = fileName.substr(0, fileName.lastIndexOf(".") );                            
+            const com = comVideos.findIndex( row => row.indexOf( videoName ) != -1 ) != -1;
+            allDiskSpace += infoFiles[fileName] ? ( Math.round( ( infoFiles[fileName].size / 1073741824 ) * 10 ) / 10 ) * (com ? 2 : 1 )  : 0;
+        } );
+    }
+    allDiskSpace = allDiskSpace + "";
+    allDiskSpace = parseFloat( allDiskSpace.substr( 0, allDiskSpace.indexOf(".") + 2 )  );
 
     return (
         <div className="flex flex-row">
@@ -194,14 +228,22 @@ export default function FileSearch() {
                         } ) }
                     </div>
                 </div>
+                <div  className="flex flex-row gap-2 text-center items-center text-white">
+                    <input 
+                        value={localSearch}
+                        onChange={(e) => { setLocalSearch( e.target.value ) }}
+                        className="bg-slate-700 px-2 w-full h-10 outline-none text-white border-2 transition-colors duration-100 border-solid focus:border-slate-400 border-slate-800"
+                    ></input>
+                    <p className="text-nowrap"> { allDiskSpace } GB </p>
+                </div>
                 { ( !isFetching && isResponseValid ) &&  <div> 
                     <div className="flex flex-col">
-                        { [...videosUpload, ...videoNames].map( (fileName) => {
+                        { allVideos.map( (fileName) => {
 
                             const videoName = fileName.substr(0, fileName.lastIndexOf(".") );                            
                             const id = videoName.indexOf("›") == -1 ? null : decodeBase62( videoName.substr( videoName.indexOf("›") + 1 ) );
 
-                            const formatted = videosFormatted.findIndex( row => row.id == id ) != -1;;
+                            const formatted = videosFormatted.findIndex( row => row.id == id ) != -1;
                             const compressed = videosCompressed.findIndex( row => row.indexOf( videoName ) != -1 ) != -1;
                             const toUpload = videosUpload.findIndex( row => row.indexOf( videoName ) != -1 ) != -1;
                             const com = comVideos.findIndex( row => row.indexOf( videoName ) != -1 ) != -1;
@@ -226,6 +268,7 @@ export default function FileSearch() {
                 </div>}
             </div>
             <VideoInfoPanel
+                body={body}
                 setBody={setBody}
                 setSelectedVideos={setSelectedVideos}
                 displayNameBody={displayNameBody}
