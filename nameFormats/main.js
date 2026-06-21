@@ -1,4 +1,6 @@
+import { canvasTextOrientation } from "@/app/files/leftPanel/ThumbnailGenerator"
 import { types } from "./fields"
+import { canvasConditionText, canvasCountText, canvasFieldsImage, canvasFieldsText, canvasSimpleText } from "./formatText"
 
 const plainText = {
     name: "PlainText",
@@ -109,7 +111,21 @@ const lol = {
         { type: types.select, options: [ "", "IV", "III", "II", "I" ], width: 7  },
         { type: types.block, char: " | " },
         { type: types.select, options: [ "", "Mods" ], width: 9  },
-    ]
+    ],
+    thumbnail: {
+        bg: "https://img2.wikia.nocookie.net/__cb20141106230719/leagueoflegends/images/d/d3/Summoners_rift_platform.png",
+        bg: "images\\ARAM-Mayhem-Changes-LoL.jpg",
+        texts: [ 
+            canvasFieldsText( { x: 1920-30, y: 1080-30, orientation: canvasTextOrientation.rightBottom }, [4], 150),
+            canvasConditionText( { x: 30, y: 1080-30, orientation: canvasTextOrientation.leftBottom }, "isCom", "COM", "No talking", 90 ),
+        ],
+        videoTexts: [
+            canvasFieldsText( { y: 200, orientation: canvasTextOrientation.centerMiddle }, [8], 80),
+            canvasFieldsImage( { y: 300, offsetX: -120, orientation: canvasTextOrientation.centerMiddle }, "https://ddragon.leagueoflegends.com/cdn/14.5.1/img/champion/@1.png", 6, { x: 240, y: 240 } ),
+            canvasFieldsText( { y: 650, orientation: canvasTextOrientation.centerMiddle }, [10], 80),            
+            canvasFieldsText( { y: 800, orientation: canvasTextOrientation.centerMiddle }, [12,13,14,15,16], 80),
+        ]
+    }
 }
 
 const minecraftSmpMarte= {
@@ -142,11 +158,11 @@ const minecraftCobblemon = {
     ],
     thumbnail: {
         bg: "https://i.redd.it/cobbletowns-a-data-pack-that-adds-custom-pok%C3%A9mon-themed-v0-yg0p0ed3hx0d1.png?width=2880&format=png&auto=webp&s=c7616e67e29d623934cfd1d9ef8b2bc360417ece",
-        text1: "Minecraft Cobbleverse",
-        text2: "",
-        text3: { comF: "No talking", comT: "COM" },
-        text4: { count: true }
-
+        texts: [ 
+            canvasSimpleText( { x: 30, y: 30, orientation: canvasTextOrientation.leftTop }, "Minecraft Cobbleverse", 150),
+            canvasConditionText( { x: 30, y: 1080-30, orientation: canvasTextOrientation.leftBottom }, "isCom", "COM", "No talking", 120 ) ,
+            canvasCountText( { x: 1920-30, y: 1080-30, orientation: canvasTextOrientation.rightBottom }, 7, 120 )
+        ],
     }
 }
 
@@ -274,8 +290,35 @@ const REPO = {
         { type: types.select, options: [ "Solo", "Duo", "Trio", "Squad", "5 Jugadores" ], width: 11 },
         { type: types.block, char: " | ", width: 1 },
         { type: types.text, length: 69, width: 69 },
-
     ]
+}
+
+const darkestDungeon = {
+    name: "Darkest Dungeon",
+    fields: [
+        { type: types.createDate, length: 8, width: 0 },
+        { type: types.block, char: " Darkest Dungeon ", width: 23 },
+        { type: types.block, char: " #", width: 2 },
+        { type: types.count, width: 4 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.block, char: " Semanas: ", width: 12 },
+        { type: types.text, length: 6, width: 6 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.text, length: 69, width: 53 },
+    ]
+}
+
+const mierdiJuegosMultijugador = {
+    name: "MierdiJuegos Multijugador",
+    fields: [
+        { type: types.createDate, length: 8, width: 0 },
+        { type: types.block, char: " Juegos Random Multijugador ", width: 40 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.select, options: [ "Supper Battle Golf" ], width: 20 },
+        { type: types.block, char: " | ", width: 1 },
+        { type: types.text, length: 69, width: 48 },
+    ]
+
 }
 
 export const nameFormatList = [
@@ -296,7 +339,9 @@ export const nameFormatList = [
     circuitoTormenta,
     BaldusGate3,
     silksong,
-    REPO
+    REPO,
+    darkestDungeon,
+    mierdiJuegosMultijugador
 ]
 
 export function valuesFromFormat( format, fileName ) {

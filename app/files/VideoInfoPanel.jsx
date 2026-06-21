@@ -38,9 +38,7 @@ export default function VideoInfoPanel( { body, setBody, setSelectedVideos, disp
     const id = videoName.indexOf("›") == -1 ? null : decodeBase62( videoName.substr( videoName.indexOf("›") + 1 ) );
     const videoMerge = mergeVideos != null && Object.keys(mergeVideos).length > 0 && id != null ? mergeVideos[id] : null;
 
-    console.log( id, displayNameBody, displayNameBody.id )
     if ( id != null && displayNameBody.id == null )  {
-        console.log( JSON.parse( getVideFormattedById(id).fields ) )
         setDisplayNameBody( oldDisplayNameBody => {
             const newDisplayNameBody = {...oldDisplayNameBody};
             newDisplayNameBody.values = JSON.parse( getVideFormattedById(id).fields );
@@ -93,7 +91,7 @@ export default function VideoInfoPanel( { body, setBody, setSelectedVideos, disp
     if ( videoMerge && videoMerge.length > 0 != null ) {
         const videoFormattedArray = videoMerge.map( ( merge => getVideFormattedById( merge.videoID  ) ) );
         const format = nameFormatList.find( format => format.name == videoFormattedArray[0].format );
-        formatThumbnailObj = {...formatThumbnailObject( format, videoFormattedArray, COM )};
+        formatThumbnailObj = {...formatThumbnailObject( format, videoFormattedArray, { isCom: COM } )};
     }
 
     return <>
@@ -129,11 +127,7 @@ export default function VideoInfoPanel( { body, setBody, setSelectedVideos, disp
                         <VideoMergeInfo infoFiles={infoFiles} videoMerge={videoMerge} />
                         <ThumbnailGenerator 
                             canvasRef={canvasRef}
-                            bg={formatThumbnailObj.bg}
-                            text1={formatThumbnailObj.text1}
-                            text2={formatThumbnailObj.text2}
-                            text3={formatThumbnailObj.text3}
-                            text4={formatThumbnailObj.text4}
+                            formatThumbnailObj={formatThumbnailObj}
                         /> 
                     </div>  }
                     <div className="flex flex-col gap-2">
